@@ -1,0 +1,30 @@
+{
+  "name": "felid",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "standard --fix src/*.js | snazzy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fralonra/felid.git"
+  },
+  "keywords": [
+    "canvas",
+    "time-lapse"
+  ],
+  "author": "zoron (https://github.com/fralonra/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fralonra/felid/issues"
+  },
+  "homepage": "https://github.com/fralonra/felid#readme",
+  "devDependencies": {
+    "snazzy": "^8.0.0",
+    "standard": "^14.0.0"
+  },
+  "dependencies": {
+    "find-my-way": "^2.1.0"
+  }
+}
