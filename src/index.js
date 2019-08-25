@@ -1,9 +1,6 @@
 const router = require('./router')
 const server = require('./server')
 
-// listen
-// get post
-
 function felid (options = {}) {
   this.options = {
     contentType: 'application/json',
@@ -11,7 +8,12 @@ function felid (options = {}) {
   }
 
   this.middlewares = []
-  this.router = router({})
+  this.router = router({
+    defaultRoute: (req, res) => {
+      res.statusCode = 404
+      res.end()
+    }
+  })
 }
 
 // middleware
