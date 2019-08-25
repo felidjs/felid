@@ -59,7 +59,9 @@ module.exports = felid
 
 function buildHanlder (handler) {
   const middlewares = this.middlewares
-  return function (req, res) {
+  return (req, res) => {
+    res.setHeader('content-type', this.options.contentType)
+
     let index = 0
     function next () {
       if (middlewares[index]) {
