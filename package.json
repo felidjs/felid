@@ -11,8 +11,9 @@
     "url": "git+https://github.com/fralonra/felid.git"
   },
   "keywords": [
-    "canvas",
-    "time-lapse"
+    "web",
+    "framework",
+    "api"
   ],
   "author": "zoron (https://github.com/fralonra/)",
   "license": "MIT",
