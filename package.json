@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "benchmark": "concurrently -k -s first \"node ./examples/simple.js\" \"autocannon -c 100 -d 5 -p 10 localhost:8080\"",
     "lint": "standard --fix src/*.js | snazzy"
   },
   "repository": {
@@ -22,6 +23,8 @@
   },
   "homepage": "https://github.com/fralonra/felid#readme",
   "devDependencies": {
+    "autocannon": "^4.0.0",
+    "concurrently": "^4.1.2",
     "snazzy": "^8.0.0",
     "standard": "^14.0.0"
   },
