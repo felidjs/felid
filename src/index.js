@@ -30,6 +30,17 @@ felid.prototype.listen = function (port) {
   this.port = port
 }
 
+const httpMethods = [
+  'delete',
+  'get',
+  'head',
+  'options',
+  'patch',
+  'post',
+  'put',
+  'trace'
+]
+
 // route
 felid.prototype.on = function (method, url, handler) {
   return this.router.on(method, url, handler)
@@ -39,21 +50,11 @@ felid.prototype.all = function (url, handler, store) {
   return this.router.all(url, handler, store)
 }
 
-felid.prototype.delete = function (url, handler) {
-  return this.router.delete(url, handler)
-}
-
-felid.prototype.get = function (url, handler) {
-  return this.router.get(url, buildHanlder.call(this, handler))
-}
-
-felid.prototype.post = function (url, handler) {
-  return this.router.post(url, handler)
-}
-
-felid.prototype.put = function (url, handler) {
-  return this.router.put(url, handler)
-}
+httpMethods.forEach(method => {
+  felid.prototype[method] = function (url, handler) {
+    return this.router[method](url, buildHanlder.call(this, handler))
+  }
+})
 
 module.exports = felid
 
