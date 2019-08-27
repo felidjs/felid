@@ -1,3 +1,5 @@
+const querystring = require('querystring')
+
 const router = require('./router')
 const server = require('./server')
 
@@ -43,11 +45,11 @@ const httpMethods = [
 
 // route
 felid.prototype.on = function (method, url, handler) {
-  return this.router.on(method, url, handler)
+  return this.router.on(method, url, buildHanlder.call(this, handler))
 }
 
 felid.prototype.all = function (url, handler, store) {
-  return this.router.all(url, handler, store)
+  return this.router.all(url, buildHanlder.call(this, handler), store)
 }
 
 httpMethods.forEach(method => {
@@ -60,7 +62,8 @@ module.exports = felid
 
 function buildHanlder (handler) {
   const middlewares = this.middlewares
-  return (req, res) => {
+  return (req, res, params) => {
+    req = buildRequest(req, params)
     res.setHeader('content-type', this.options.contentType)
 
     let index = 0
@@ -77,4 +80,19 @@ function buildHanlder (handler) {
       handler(req, res)
     }
   }
+}
+
+function buildRequest (req, params) {
+  const queryPrefix = req.url.indexOf('?')
+  if (queryPrefix >= 0) {
+    req.query = querystring.parse(req.url.slice(queryPrefix + 1))
+  }
+  if (params) {
+    req.params = params
+  }
+  return req
+}
+
+function buildResponse (res) {
+
 }
