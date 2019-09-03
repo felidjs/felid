@@ -10,6 +10,7 @@ function felid (options = {}) {
   }
 
   this.middlewares = []
+  this.routeMiddlewares = {}
   this.router = router({
     defaultRoute: (req, res) => {
       res.statusCode = 404
@@ -19,8 +20,16 @@ function felid (options = {}) {
 }
 
 // middleware
-felid.prototype.use = function (middle) {
-  this.middlewares.push(middle)
+felid.prototype.use = function (url, ...middle) {
+  if (typeof url === 'function') {
+    middle = url
+    this.middlewares.push(middle)
+  } else if (typeof url === 'string') {
+    if (!this.routeMiddlewares[url]) {
+      this.routeMiddlewares[url] = []
+    }
+    this.routeMiddlewares[url].push(...middle)
+  }
 }
 
 // listen
@@ -45,23 +54,23 @@ const httpMethods = [
 
 // route
 felid.prototype.on = function (method, url, handler) {
-  return this.router.on(method, url, buildHanlder.call(this, handler))
+  return this.router.on(method, url, buildHanlder.call(this, url, handler))
 }
 
 felid.prototype.all = function (url, handler, store) {
-  return this.router.all(url, buildHanlder.call(this, handler), store)
+  return this.router.all(url, buildHanlder.call(this, url, handler), store)
 }
 
 httpMethods.forEach(method => {
   felid.prototype[method] = function (url, handler) {
-    return this.router[method](url, buildHanlder.call(this, handler))
+    return this.router[method](url, buildHanlder.call(this, url, handler))
   }
 })
 
 module.exports = felid
 
-function buildHanlder (handler) {
-  const middlewares = this.middlewares
+function buildHanlder (url, handler) {
+  const middlewares = this.middlewares.concat(this.routeMiddlewares[url] || [])
   return async (req, res, params) => {
     req = await buildRequest(req, params)
     res = buildResponse(res)
