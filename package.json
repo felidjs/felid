@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "benchmark": "concurrently -k -s first \"node ./examples/simple.js\" \"autocannon -c 100 -d 5 -p 10 localhost:8080\"",
+    "benchmark": "concurrently -k -s first \"node ./examples/basic.js\" \"autocannon -c 100 -d 5 -p 10 localhost:8080\"",
     "lint": "standard --fix src/*.js | snazzy"
   },
   "repository": {
