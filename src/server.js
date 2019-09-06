@@ -1,10 +1,6 @@
 const http = require('http')
 
-function server (options, handler) {
-  const opt = {
-    ...options
-  }
-
+function server (handler) {
   const server = http.createServer(handler)
   return server
 }
