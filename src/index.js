@@ -35,11 +35,12 @@ felid.prototype.use = function (url, ...middle) {
 // listen
 felid.prototype.listen = function (port, callback) {
   const options = typeof port === 'number' ? { port } : port
+  this.port = options.port
+
   this.server = server((req, res) => {
     this.router.lookup(req, res)
   })
   this.server.listen(options, callback)
-  this.port = port
 }
 
 const httpMethods = [
