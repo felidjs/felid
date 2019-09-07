@@ -29,6 +29,10 @@ felid.prototype.use = function (url, ...middle) {
       this.routeMiddlewares[url] = []
     }
     this.routeMiddlewares[url].push(...middle)
+  } else if (Array.isArray(url)) {
+    url.forEach(path => {
+      this.use.apply(this, [path, ...middle])
+    })
   }
 }
 
