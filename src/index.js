@@ -5,6 +5,7 @@ const buildResponse = require('./response').build
 
 function felid (options = {}) {
   this.options = {
+    routeOptions: {},
     ...options
   }
 
@@ -14,7 +15,8 @@ function felid (options = {}) {
     defaultRoute: (req, res) => {
       res.statusCode = 404
       res.end()
-    }
+    },
+    ...this.options.routeOptions
   })
 }
 
