@@ -5,7 +5,6 @@ const buildResponse = require('./response').build
 
 function felid (options = {}) {
   this.options = {
-    contentType: 'application/json',
     ...options
   }
 

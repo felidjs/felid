@@ -33,12 +33,23 @@ function buildBody (req) {
       body += chunk
     })
     req.on('end', () => {
-      resolve(body)
+      resolve(parseBody(req, body))
     })
     req.on('error', err => {
       reject(err)
     })
   })
+}
+
+function parseBody (req, body) {
+  if (req.headers['content-type'] === 'application/json') {
+    try {
+      body = JSON.parse(body)
+    } catch (e) {
+      return e
+    }
+  }
+  return body
 }
 
 module.exports.build = buildRequest
