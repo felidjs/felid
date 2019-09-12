@@ -1,4 +1,8 @@
 function buildResponse (res) {
+  res.code = (code) => {
+    res.statusCode = code
+    return res
+  }
   res.send = (payload) => {
     if (typeof payload === 'string') {
       res.setHeader('content-type', 'text/plain; charset=utf-8')
