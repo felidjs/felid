@@ -1,6 +1,6 @@
-const felid = require('../src')
+const Felid = require('../src')
 
-const app = new felid()
+const app = new Felid()
 
 app.get('/', (req, res) => {
   res.send('hello felid')
