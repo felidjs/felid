@@ -61,7 +61,7 @@ const httpMethods = [
 
 // route
 felid.prototype.on = function (method, url, handler) {
-  return this.router.on(method, url, buildHanlder.call(this, url, handler))
+  return this.router.on(method.toUpperCase(), url, buildHanlder.call(this, url, handler))
 }
 
 felid.prototype.all = function (url, handler, store) {
