@@ -3,6 +3,14 @@ function buildResponse (res) {
     res.statusCode = code
     return res
   }
+  res.redirect = (code, url) => {
+    if (typeof code === 'string') {
+      url = code
+      code = 302
+    }
+    res.setHeader('location', url)
+    res.code(code).send()
+  }
   res.send = (payload) => {
     if (typeof payload === 'string') {
       res.setHeader('content-type', 'text/plain; charset=utf-8')
