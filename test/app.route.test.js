@@ -27,6 +27,23 @@ const httpMethods = [
   'trace'
 ]
 
+test('felid.all should add handler to all http methods', () => {
+  const instance = new Felid()
+  instance.all('/test', (req, res) => {
+    res.send(req.method)
+  })
+  
+  httpMethods.forEach(method => {
+    injectar(instance.router.lookup.bind(instance.router))
+      [method]('/test')
+      .end((err, res) => {
+        expect(err).toBe(null)
+        expect(res.statusCode).toBe(200)
+        expect(res.body).toBe(method.toUpperCase())
+      })
+  })
+})
+
 test('felid uses correct http method', () => {
   const instance = new Felid()
   
