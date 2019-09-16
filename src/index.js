@@ -4,7 +4,7 @@ const buildRequest = require('./request').build
 const buildResponse = require('./response').build
 
 function felid (options = {}) {
-  this.options = {
+  this.option = {
     routeOptions: {},
     ...options
   }
@@ -16,7 +16,7 @@ function felid (options = {}) {
       res.statusCode = 404
       res.end()
     },
-    ...this.options.routeOptions
+    ...this.option.routeOptions
   })
 }
 
