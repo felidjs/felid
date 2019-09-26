@@ -30,7 +30,8 @@ const httpMethods = [
 test('felid.all should add handler to all http methods', () => {
   const instance = new Felid()
   instance.all('/test', (req, res) => {
-    res.send(req.method)
+    res.setHeader('method', req.method)
+    res.send()
   })
   
   httpMethods.forEach(method => {
@@ -39,7 +40,7 @@ test('felid.all should add handler to all http methods', () => {
       .end((err, res) => {
         expect(err).toBe(null)
         expect(res.statusCode).toBe(200)
-        expect(res.body).toBe(method.toUpperCase())
+        expect(res.headers.method).toBe(method.toUpperCase())
       })
   })
 })
@@ -49,14 +50,15 @@ test('felid uses correct http method', () => {
   
   httpMethods.forEach(method => {
     instance[method]('/test', (req, res) => {
-      res.send(req.method)
+      res.setHeader('method', req.method)
+      res.send()
     })
     injectar(instance.router.lookup.bind(instance.router))
       [method]('/test')
       .end((err, res) => {
         expect(err).toBe(null)
         expect(res.statusCode).toBe(200)
-        expect(res.body).toBe(method.toUpperCase())
+        expect(res.headers.method).toBe(method.toUpperCase())
       })
   })
 })
