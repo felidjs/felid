@@ -39,14 +39,11 @@ class Felid {
   }
 
   // listen
-  listen (port, callback) {
-    const options = typeof port === 'number' ? { port } : port
-    this.port = options.port
-  
+  listen (...args) {
     this.server = server((req, res) => {
       this.router.lookup(req, res)
-    })
-    this.server.listen(options, callback)
+    }, ...args)
+    this.address = this.server.address()
   }
 
   // route
