@@ -14,18 +14,24 @@ function redirect (code, url) {
 
 function send (payload) {
   if (typeof payload === 'string') {
-    this.setHeader('content-type', 'text/plain; charset=utf-8')
+    if (!this.hasHeader('content-type')) {
+      this.setHeader('content-type', 'text/plain; charset=utf-8')
+    }
     this.end(payload)
     return
   }
   if (Buffer.isBuffer(payload)) {
-    this.setHeader('content-type', 'application/octet-stream')
+    if (!this.hasHeader('content-type')) {
+      this.setHeader('content-type', 'application/octet-stream')
+    }
     this.end(payload)
     return
   }
   try {
     const jsonPayload = JSON.stringify(payload)
-    this.setHeader('content-type', 'application/json; charset=utf-8')
+    if (!this.hasHeader('content-type')) {
+      this.setHeader('content-type', 'application/json; charset=utf-8')
+    }
     this.end(jsonPayload)
   } catch (e) {
     this.end(payload)
