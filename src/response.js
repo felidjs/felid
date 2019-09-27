@@ -33,7 +33,7 @@ function send (payload) {
 }
 
 function buildResponse (res) {
-  res.redirect = code.bind(res)
+  res.code = code.bind(res)
   res.redirect = redirect.bind(res)
   res.send = send.bind(res)
   return res
