@@ -76,7 +76,9 @@ httpMethods.forEach(method => {
 module.exports = Felid
 
 function buildHanlder (url, handler) {
-  const middlewares = this.middlewares.concat(this.routeMiddlewares[url] || [])
+  const middlewares = this.routeMiddlewares[url]
+    ? this.middlewares.concat(this.routeMiddlewares[url])
+    : this.middlewares
   return async (req, res, params) => {
     req = await buildRequest(req, params)
     res = buildResponse(res)
