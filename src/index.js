@@ -1,7 +1,12 @@
 const router = require('./router')
 const server = require('./server')
+const Hook = require('./hook')
 const buildRequest = require('./request').build
 const buildResponse = require('./response').build
+
+const {
+  PRE_REQUEST
+} = require('./symbol')
 
 class Felid {
   constructor (options = {}) {
@@ -10,6 +15,7 @@ class Felid {
       ...options
     }
   
+    this.hooks = new Hook()
     this.middlewares = []
     this.routeMiddlewares = {}
     this.router = router({
@@ -19,6 +25,11 @@ class Felid {
       },
       ...this.option.routeOptions
     })
+  }
+
+  // hook
+  hook (hookName, handler) {
+    this.hooks.add(hookName, handler)
   }
 
   // middleware
@@ -80,8 +91,10 @@ function buildHanlder (url, handler) {
     ? this.middlewares.concat(this.routeMiddlewares[url])
     : this.middlewares
   return async (req, res, params) => {
+    this.hooks.run(PRE_REQUEST, req, res)
+
     req = await buildRequest(req, params)
-    res = buildResponse(res)
+    res = buildResponse(this, req, res)
 
     let index = 0
     function next () {
