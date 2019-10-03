@@ -2,58 +2,86 @@ const {
   POST_RESPONSE
 } = require('./symbol')
 
-function code (code) {
-  this.statusCode = code
-  return this
-}
-
-function redirect (code, url) {
-  if (typeof code === 'string') {
-    url = code
-    code = 302
-  }
-  this.setHeader('location', url)
-  this.code(code).send()
-}
-
-function send (payload) {
-  if (typeof payload === 'string') {
-    if (!this.hasHeader('content-type')) {
-      this.setHeader('content-type', 'text/plain; charset=utf-8')
+const Response = {
+  code (code) {
+    if (code === undefined) {
+      return this.res.statusCode
     }
-    onSend.call(this, payload)
-    return
-  }
-  if (Buffer.isBuffer(payload)) {
-    if (!this.hasHeader('content-type')) {
-      this.setHeader('content-type', 'application/octet-stream')
+    this.res.statusCode = code
+    return this
+  },
+
+  header (key, value) {
+    if (value === undefined) {
+      return this.res.getHeader(key)
     }
-    onSend.call(this, payload)
-    return
-  }
-  try {
-    const jsonPayload = JSON.stringify(payload)
-    if (!this.hasHeader('content-type')) {
-      this.setHeader('content-type', 'application/json; charset=utf-8')
+    this.res.setHeader(key, value)
+    return this
+  },
+
+  set headers (value) {
+    this.res.headers = value
+    return this
+  },
+
+  get headers () {
+    return this.res.headers
+  },
+  
+  redirect (code, url) {
+    if (typeof code === 'string') {
+      url = code
+      code = 302
     }
-    onSend.call(this, jsonPayload)
-  } catch (e) {
-    onSend.call(this, payload)
+    this.res.setHeader('location', url)
+    this.code(code).send()
+  },
+  
+  send (payload) {
+    if (typeof payload === 'string') {
+      if (!this.res.hasHeader('content-type')) {
+        this.header('content-type', 'text/plain; charset=utf-8')
+      }
+      onSend(this, payload)
+      return
+    }
+    if (Buffer.isBuffer(payload)) {
+      if (!this.res.hasHeader('content-type')) {
+        this.header('content-type', 'application/octet-stream')
+      }
+      onSend(this, payload)
+      return
+    }
+    try {
+      const jsonPayload = JSON.stringify(payload)
+      if (!this.res.hasHeader('content-type')) {
+        this.res.setHeader('content-type', 'application/json; charset=utf-8')
+      }
+      onSend(this, jsonPayload)
+    } catch (e) {
+      onSend(this, payload)
+    }
   }
 }
 
-function onSend (payload) {
-  this.end(payload)
-  this.context.hooks.run(POST_RESPONSE, this.req, this)
+function build (req, res) {
+  const response = Object.create(Response)
+  response.req = req
+  response.res = res
+  return response
 }
 
-function buildResponse (ctx, req, res) {
-  res.context = ctx
-  res.req = req
-  res.code = code.bind(res)
-  res.redirect = redirect.bind(res)
-  res.send = send.bind(res)
-  return res
+function onSend (response, payload) {
+  response.res.end(payload)
+  response.context.hooks.run(POST_RESPONSE, response.req, response)
 }
 
-module.exports.build = buildResponse
+module.exports = {
+  init: function (ctx) {
+    Response.context = ctx
+    return Response
+  },
+  build: function (req, res) {
+    return build(req, res)
+  }
+}

@@ -1,8 +1,8 @@
 const router = require('./router')
 const server = require('./server')
 const Hook = require('./hook')
-const buildRequest = require('./request').build
-const buildResponse = require('./response').build
+const Request = require('./request')
+const Response = require('./response')
 
 const {
   PRE_REQUEST
@@ -18,6 +18,8 @@ class Felid {
     this.hooks = new Hook()
     this.middlewares = []
     this.routeMiddlewares = {}
+    this.request = Request.init()
+    this.response = Response.init(this)
     this.router = router({
       defaultRoute: (req, res) => {
         res.statusCode = 404
@@ -93,21 +95,21 @@ function buildHanlder (url, handler) {
   return async (req, res, params) => {
     this.hooks.run(PRE_REQUEST, req, res)
 
-    req = await buildRequest(req, params)
-    res = buildResponse(this, req, res)
+    const request = await Request.build(req, params)
+    const response = Response.build(req, res)
 
     let index = 0
     function next () {
       if (middlewares[index]) {
-        middlewares[index++](req, res, next)
+        middlewares[index++](request, response, next)
       } else {
-        handler(req, res)
+        handler(request, response)
       }
     }
     if (middlewares.length) {
       next()
     } else {
-      handler(req, res)
+      handler(request, response)
     }
   }
 }

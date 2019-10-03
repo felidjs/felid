@@ -7,23 +7,43 @@ const noBodyMethods = [
   'trace'
 ]
 
-async function buildRequest (req, params) {
+const Request = {
+  header (key) {
+    return this.req.headers[key]
+  },
+
+  get headers () {
+    return this.req.headers
+  },
+
+  get method () {
+    return this.req.method
+  },
+
+  get url () {
+    return this.req.url
+  }
+}
+
+async function build (req, params) {
+  const request = Object.create(Request)
+  request.req = req
   const queryPrefix = req.url.indexOf('?')
   if (queryPrefix >= 0) {
-    req.query = querystring.parse(req.url.slice(queryPrefix + 1))
+    request.query = querystring.parse(req.url.slice(queryPrefix + 1))
   }
   if (params) {
-    req.params = params
+    request.params = params
   }
   if (noBodyMethods.indexOf(req.method) >= 0) {
-    return req
+    return request
   }
   try {
-    req.body = await buildBody(req)
+    request.body = await buildBody(req)
   } catch (e) {
-    req.body = null
+    request.body = null
   }
-  return req
+  return request
 }
 
 function buildBody (req) {
@@ -52,4 +72,11 @@ function parseBody (req, body) {
   return body
 }
 
-module.exports.build = buildRequest
+module.exports = {
+  init: function () {
+    return Request
+  },
+  build: async function (req, params) {
+    return await build(req, params)
+  }
+}
