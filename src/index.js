@@ -73,12 +73,18 @@ class Felid {
   }
 
   // route
-  on (method, url, handler) {
-    return this.router.on(method.toUpperCase(), url, buildHanlder.call(this, url, handler))
+  on (method, url, handler, store) {
+    return this.router.on(method.toUpperCase(), url, buildHanlder.call(this, url, handler), store)
   }
 
   all (url, handler, store) {
     return this.router.all(url, buildHanlder.call(this, url, handler), store)
+  }
+
+  // plugin
+  plugin (fn, option) {
+    if (typeof fn !== 'function') return
+    fn(this, option)
   }
 }
 
