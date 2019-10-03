@@ -29,6 +29,19 @@ class Felid {
     })
   }
 
+  // decorate
+  decorate (key, value) {
+    buildDecorator(this, key, value)
+  }
+
+  decorateRequest (key, value) {
+    buildDecorator(this.request, key, value)
+  }
+
+  decorateResponse (key, value) {
+    buildDecorator(this.response, key, value)
+  }
+
   // hook
   hook (hookName, handler) {
     this.hooks.add(hookName, handler)
@@ -96,7 +109,7 @@ function buildHanlder (url, handler) {
     this.hooks.run(PRE_REQUEST, req, res)
 
     const request = await Request.build(req, params)
-    const response = Response.build(req, res)
+    const response = Response.build(request, res)
 
     let index = 0
     function next () {
@@ -112,4 +125,10 @@ function buildHanlder (url, handler) {
       handler(request, response)
     }
   }
+}
+
+function buildDecorator (instance, key, value) {
+  if (key === undefined || value === undefined) return
+  if (instance.hasOwnProperty(key)) return
+  instance[key] = value
 }
