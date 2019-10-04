@@ -1,3 +1,5 @@
+const http = require('http')
+
 const router = require('./router')
 const server = require('./server')
 const Hook = require('./hook')
@@ -14,7 +16,7 @@ class Felid {
       routeOptions: {},
       ...options
     }
-  
+
     this.hooks = new Hook()
     this.middlewares = []
     this.routeMiddlewares = {}
@@ -27,6 +29,7 @@ class Felid {
       },
       ...this.option.routeOptions
     })
+    this.errorHandler = handleError
   }
 
   // decorate
@@ -86,6 +89,20 @@ class Felid {
     if (typeof fn !== 'function') return
     fn(this, option)
   }
+
+  // error handle
+  onError (fn) {
+    if (typeof fn !== 'function') return
+    this.errorHandler = fn.bind(this)
+  }
+
+  handleError (err, req, res) {
+    if (typeof this.errorHandler !== 'function') {
+      handleError.call(this, err, req, res)
+      return
+    }
+    this.errorHandler(err, req, res)
+  }
 }
 
 const httpMethods = [
@@ -112,23 +129,28 @@ function buildHanlder (url, handler) {
     ? this.middlewares.concat(this.routeMiddlewares[url])
     : this.middlewares
   return async (req, res, params) => {
-    this.hooks.run(PRE_REQUEST, req, res)
-
-    const request = await Request.build(req, params)
-    const response = Response.build(request, res)
-
-    let index = 0
-    function next () {
-      if (middlewares[index]) {
-        middlewares[index++](request, response, next)
+    let request, response
+    try {
+      this.hooks.run(PRE_REQUEST, req, res)
+      
+      request = await Request.build(req, params)
+      response = Response.build(request, res)
+    
+      let index = 0
+      function next () {
+        if (middlewares[index]) {
+          middlewares[index++](request, response, next)
+        } else {
+          handler(request, response)
+        }
+      }
+      if (middlewares.length) {
+        next()
       } else {
         handler(request, response)
       }
-    }
-    if (middlewares.length) {
-      next()
-    } else {
-      handler(request, response)
+    } catch (e) {
+      this.handleError(e, request || req, response || res)
     }
   }
 }
@@ -137,4 +159,13 @@ function buildDecorator (instance, key, value) {
   if (key === undefined || value === undefined) return
   if (instance.hasOwnProperty(key)) return
   instance[key] = value
+}
+
+function handleError (err, req, res) {
+  if (res instanceof http.ServerResponse) {
+    res.statusCode = 500
+    res.end(err.message || res.statusCode.toString())
+    return
+  }
+  res.code(500).send(err.message || res.code())
 }

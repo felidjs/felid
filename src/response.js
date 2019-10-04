@@ -27,7 +27,7 @@ const Response = {
   get headers () {
     return this.res.headers
   },
-  
+
   redirect (code, url) {
     if (typeof code === 'string') {
       url = code
@@ -36,7 +36,7 @@ const Response = {
     this.res.setHeader('location', url)
     this.code(code).send()
   },
-  
+
   send (payload) {
     if (typeof payload === 'string') {
       if (!this.res.hasHeader('content-type')) {
