@@ -1,3 +1,4 @@
+const assert = require('assert')
 const {
   PRE_REQUEST,
   POST_RESPONSE
@@ -13,8 +14,8 @@ const hookMap = {}
 function Hooks () {}
 
 Hooks.prototype.add = function (hookName, handler) {
-  if (!Object.keys(availableHooks).includes(hookName)) return
-  if (typeof handler !== 'function') return
+  assert.ok(Object.keys(availableHooks).includes(hookName), `Invalid hook: ${hookName}`)
+  assert.equal(typeof handler, 'function', `Handler for '${hookName}' hook should be a function`)
   hookMap[availableHooks[hookName]] = handler
 }
 

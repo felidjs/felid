@@ -1,3 +1,4 @@
+const assert = require('assert')
 const http = require('http')
 
 const router = require('./router')
@@ -86,13 +87,13 @@ class Felid {
 
   // plugin
   plugin (fn, option) {
-    if (typeof fn !== 'function') return
+    assert.equal(typeof fn, 'function', 'Handler for plugin must be a function')
     fn(this, option)
   }
 
   // error handle
   onError (fn) {
-    if (typeof fn !== 'function') return
+    assert.equal(typeof fn, 'function', 'Error handler must be a function')
     this.errorHandler = fn.bind(this)
   }
 
@@ -156,8 +157,9 @@ function buildHanlder (url, handler) {
 }
 
 function buildDecorator (instance, key, value) {
-  if (key === undefined || value === undefined) return
-  if (instance.hasOwnProperty(key)) return
+  assert.notEqual(key, undefined, 'The key for a decorator should not be undefined')
+  assert.notEqual(value, undefined, `The value for a decorator should not be undefined`)
+  assert.ok(!instance.hasOwnProperty(key), `The property named "${key}" already exists`)
   instance[key] = value
 }
 
