@@ -1,6 +1,6 @@
 const {
-  POST_RESPONSE
-} = require('./symbol')
+  HOOK_POST_RESPONSE
+} = require('./constance')
 
 const Response = {
   code (code) {
@@ -73,7 +73,7 @@ function build (request, res) {
 
 function onSend (response, payload) {
   response.res.end(payload)
-  response.context.hooks.run(POST_RESPONSE, response.request, response)
+  response.context.hooks.run(HOOK_POST_RESPONSE, response.request, response)
 }
 
 module.exports = {

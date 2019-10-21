@@ -8,8 +8,8 @@ const Request = require('./request')
 const Response = require('./response')
 
 const {
-  PRE_REQUEST
-} = require('./symbol')
+  HOOK_PRE_REQUEST
+} = require('./constance')
 
 class Felid {
   constructor (options = {}) {
@@ -78,11 +78,11 @@ class Felid {
 
   // route
   on (method, url, handler, store) {
-    return this.router.on(method.toUpperCase(), url, buildHanlder.call(this, url, handler), store)
+    return this.router.on(method.toUpperCase(), url, buildHanlder(this, url, handler), store)
   }
 
   all (url, handler, store) {
-    return this.router.all(url, buildHanlder.call(this, url, handler), store)
+    return this.router.all(url, buildHanlder(this, url, handler), store)
   }
 
   // plugin
@@ -99,7 +99,7 @@ class Felid {
 
   handleError (err, req, res) {
     if (typeof this.errorHandler !== 'function') {
-      handleError.call(this, err, req, res)
+      handleError(this, err, req, res)
       return
     }
     this.errorHandler(err, req, res)
@@ -119,20 +119,20 @@ const httpMethods = [
 
 httpMethods.forEach(method => {
   Felid.prototype[method] = function (url, handler) {
-    return this.router[method](url, buildHanlder.call(this, url, handler))
+    return this.router[method](url, buildHanlder(this, url, handler))
   }
 })
 
 module.exports = Felid
 
-function buildHanlder (url, handler) {
-  const middlewares = this.routeMiddlewares[url]
-    ? this.middlewares.concat(this.routeMiddlewares[url])
-    : this.middlewares
-  return async (req, res, params) => {
+function buildHanlder (ctx, url, handler) {
+  const middlewares = ctx.routeMiddlewares[url]
+    ? ctx.middlewares.concat(ctx.routeMiddlewares[url])
+    : ctx.middlewares
+  async function fn (req, res, params) {
     let request, response
     try {
-      this.hooks.run(PRE_REQUEST, req, res)
+      ctx.hooks.run(HOOK_PRE_REQUEST, req, res)
       
       request = await Request.build(req, params)
       response = Response.build(request, res)
@@ -151,9 +151,10 @@ function buildHanlder (url, handler) {
         handler(request, response)
       }
     } catch (e) {
-      this.handleError(e, request || req, response || res)
+      ctx.handleError(e, request || req, response || res)
     }
   }
+  return fn
 }
 
 function buildDecorator (instance, key, value) {
