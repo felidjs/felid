@@ -76,7 +76,5 @@ module.exports = {
   init: function () {
     return Request
   },
-  build: async function (req, params) {
-    return await build(req, params)
-  }
+  build
 }

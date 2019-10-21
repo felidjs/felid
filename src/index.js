@@ -8,7 +8,9 @@ const Request = require('./request')
 const Response = require('./response')
 
 const {
-  HOOK_PRE_REQUEST
+  HOOK_PRE_REQUEST,
+  HOOK_MIDDLE,
+  HOOK_POST_RESPONSE
 } = require('./constance')
 
 class Felid {
@@ -30,7 +32,7 @@ class Felid {
       },
       ...this.option.routeOptions
     })
-    this.errorHandler = handleError
+    this.errorHandler = handleError.bind(this)
   }
 
   // decorate
@@ -47,25 +49,20 @@ class Felid {
   }
 
   // hook
-  hook (hookName, handler) {
-    this.hooks.add(hookName, handler)
+  hook (hookName, url, ...handlers) {
+    this.hooks.add(hookName, url, ...handlers)
   }
 
-  // middleware
-  use (url, ...middle) {
-    if (typeof url === 'function') {
-      middle = url
-      this.middlewares.push(middle)
-    } else if (typeof url === 'string') {
-      if (!this.routeMiddlewares[url]) {
-        this.routeMiddlewares[url] = []
-      }
-      this.routeMiddlewares[url].push(...middle)
-    } else if (Array.isArray(url)) {
-      url.forEach(path => {
-        this.use(path, ...middle)
-      })
-    }
+  preRequest (url, ...handlers) {
+    this.hook(HOOK_PRE_REQUEST, url, ...handlers)
+  }
+
+  use (url, ...handlers) {
+    this.hook(HOOK_MIDDLE, url, ...handlers)
+  }
+
+  postResponse (url, ...handlers) {
+    this.hook(HOOK_POST_RESPONSE, url, ...handlers)
   }
 
   // listen
@@ -96,14 +93,6 @@ class Felid {
     assert.equal(typeof fn, 'function', 'Error handler must be a function')
     this.errorHandler = fn.bind(this)
   }
-
-  handleError (err, req, res) {
-    if (typeof this.errorHandler !== 'function') {
-      handleError(this, err, req, res)
-      return
-    }
-    this.errorHandler(err, req, res)
-  }
 }
 
 const httpMethods = [
@@ -118,43 +107,29 @@ const httpMethods = [
 ]
 
 httpMethods.forEach(method => {
-  Felid.prototype[method] = function (url, handler) {
-    return this.router[method](url, buildHanlder(this, url, handler))
+  Felid.prototype[method] = function (url, handler, store) {
+    return this.router[method](url, buildHanlder(this, url, handler, store))
   }
 })
 
 module.exports = Felid
 
 function buildHanlder (ctx, url, handler) {
-  const middlewares = ctx.routeMiddlewares[url]
-    ? ctx.middlewares.concat(ctx.routeMiddlewares[url])
-    : ctx.middlewares
-  async function fn (req, res, params) {
-    let request, response
-    try {
-      ctx.hooks.run(HOOK_PRE_REQUEST, req, res)
-      
-      request = await Request.build(req, params)
-      response = Response.build(request, res)
-    
-      let index = 0
-      function next () {
-        if (middlewares[index]) {
-          middlewares[index++](request, response, next)
-        } else {
-          handler(request, response)
-        }
-      }
-      if (middlewares.length) {
-        next()
-      } else {
-        handler(request, response)
-      }
-    } catch (e) {
-      ctx.handleError(e, request || req, response || res)
-    }
+  let request, response
+  async function buildObjs (req, res, params) {
+    request = await Request.build(req, params)
+    response = Response.build(request, res, url)
+    return Promise.resolve()
   }
-  return fn
+  return function (req, res, params) {
+    ctx.hooks.run(HOOK_PRE_REQUEST, url, req, res)
+      .then(() => buildObjs(req, res, params))
+      .then(() => ctx.hooks.run(HOOK_MIDDLE, url, request, response))
+      .then(() => handler(request, response))
+      .catch(e => {
+        ctx.errorHandler(e, request || req, response || res)
+      })
+  }
 }
 
 function buildDecorator (instance, key, value) {

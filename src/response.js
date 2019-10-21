@@ -64,16 +64,17 @@ const Response = {
   }
 }
 
-function build (request, res) {
+function build (request, res, url) {
   const response = Object.create(Response)
   response.request = request
   response.res = res
+  response.url = url
   return response
 }
 
 function onSend (response, payload) {
   response.res.end(payload)
-  response.context.hooks.run(HOOK_POST_RESPONSE, response.request, response)
+  response.context.hooks.run(HOOK_POST_RESPONSE, response.url, response.request, response)
 }
 
 module.exports = {
@@ -81,7 +82,5 @@ module.exports = {
     Response.context = ctx
     return Response
   },
-  build: function (request, res) {
-    return build(request, res)
-  }
+  build
 }
