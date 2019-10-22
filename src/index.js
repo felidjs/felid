@@ -108,7 +108,7 @@ const httpMethods = [
 
 httpMethods.forEach(method => {
   Felid.prototype[method] = function (url, handler, store) {
-    return this.router[method](url, buildHanlder(this, url, handler, store))
+    return this.router[method](url, buildHanlder(this, url, handler), store)
   }
 })
 
