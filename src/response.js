@@ -25,7 +25,6 @@ const Response = {
 
   set headers (value) {
     this.res.headers = value
-    return this
   },
 
   get headers () {
