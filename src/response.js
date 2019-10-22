@@ -11,6 +11,10 @@ const Response = {
     return this
   },
 
+  get finished () {
+    return this.res.finished
+  },
+
   header (key, value) {
     if (value === undefined) {
       return this.res.getHeader(key)
