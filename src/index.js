@@ -21,8 +21,6 @@ class Felid {
     }
 
     this.hooks = new Hook()
-    this.middlewares = []
-    this.routeMiddlewares = {}
     this.request = Request.init()
     this.response = Response.init(this)
     this.router = router({
