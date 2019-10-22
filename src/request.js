@@ -38,11 +38,7 @@ async function build (req, params) {
   if (noBodyMethods.indexOf(req.method) >= 0) {
     return request
   }
-  try {
-    request.body = await buildBody(req)
-  } catch (e) {
-    request.body = null
-  }
+  request.body = await buildBody(req)
   return request
 }
 
