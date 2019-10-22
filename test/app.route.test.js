@@ -28,13 +28,12 @@ const httpMethods = [
 ]
 
 test('felid.all should add handler to all http methods', () => {
-  const instance = new Felid()
-  instance.all('/test', (req, res) => {
-    res.header('method', req.method)
-    res.send()
-  })
-  
   httpMethods.forEach(method => {
+    const instance = new Felid()
+    instance.all('/test', (req, res) => {
+      res.header('method', req.method).send()
+    })
+
     injectar(instance.router.lookup.bind(instance.router))
       [method]('/test')
       .end((err, res) => {
@@ -50,8 +49,7 @@ test('felid uses correct http method', () => {
   
   httpMethods.forEach(method => {
     instance[method]('/test', (req, res) => {
-      res.header('method', req.method)
-      res.send()
+      res.header('method', req.method).send()
     })
     injectar(instance.router.lookup.bind(instance.router))
       [method]('/test')
