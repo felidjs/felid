@@ -29,14 +29,14 @@ const supportedHttpMethods = [
 
 // all
 test('felid.all should add handler to all http methods', () => {
-  supportedHttpMethods.forEach(method => {
-    const instance = new Felid()
-    instance.all('/test', (req, res) => {
-      res.header('method', req.method).send()
-    })
+  const instance = new Felid()
+  instance.all('/test', (req, res) => {
+    res.header('method', req.method).send()
+  })
 
-    injectar(instance.router.lookup.bind(instance.router))
-      [method]('/test')
+  const inject = injectar(instance.router.lookup.bind(instance.router))
+  supportedHttpMethods.forEach(method => {
+    inject[method]('/test')
       .end((err, res) => {
         expect(err).toBe(null)
         expect(res.statusCode).toBe(200)
@@ -48,13 +48,15 @@ test('felid.all should add handler to all http methods', () => {
 // http methods
 test('felid uses correct http method', () => {
   const instance = new Felid()
-  
   supportedHttpMethods.forEach(method => {
     instance[method]('/test', (req, res) => {
       res.header('method', req.method).send()
     })
-    injectar(instance.router.lookup.bind(instance.router))
-      [method]('/test')
+  })
+  
+  const inject = injectar(instance.router.lookup.bind(instance.router))
+  supportedHttpMethods.forEach(method => {
+    inject[method]('/test')
       .end((err, res) => {
         expect(err).toBe(null)
         expect(res.statusCode).toBe(200)

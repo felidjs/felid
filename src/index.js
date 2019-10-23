@@ -125,20 +125,18 @@ supportedHttpMethods.forEach(method => {
 module.exports = Felid
 
 function buildHanlder (ctx, url, handler) {
-  let request, response
-  async function buildObjs (req, res, params) {
-    request = await Request.build(ctx.request, req, params)
-    response = Response.build(ctx.response, request, res, url)
-    return Promise.resolve()
-  }
   return function (req, res, params) {
+    let request, response
+    async function buildObjs (req, res, params) {
+      request = await Request.build(ctx.request, req, params)
+      response = Response.build(ctx.response, request, res, url)
+      return Promise.resolve()
+    }
     ctx.hooks.run(HOOK_PRE_REQUEST, url, req, res)
       .then(() => buildObjs(req, res, params))
       .then(() => ctx.hooks.run(HOOK_MIDDLE, url, request, response))
       .then(() => handler(request, response))
-      .catch(e => {
-        ctx.errorHandler(e, request || req, response || res)
-      })
+      .catch(e => ctx.errorHandler(e, request || req, response || res))
   }
 }
 
