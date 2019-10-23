@@ -1,6 +1,9 @@
 const {
   HOOK_POST_RESPONSE
 } = require('./constants')
+const {
+  kHooks
+} = require('./symbols')
 
 const Response = {
   code (code) {
@@ -77,7 +80,7 @@ function build (proto, request, res, url) {
 
 function onSend (response, payload) {
   response.res.end(payload)
-  response.context.hooks.run(HOOK_POST_RESPONSE, response.url, response.request, response)
+  response.context[kHooks].run(HOOK_POST_RESPONSE, response.url, response.request, response)
 }
 
 module.exports = {

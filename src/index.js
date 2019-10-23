@@ -13,25 +13,34 @@ const {
   HOOK_POST_RESPONSE
 } = require('./constants')
 
+const {
+  kOption,
+  kErrorHandler,
+  kHooks,
+  kRequest,
+  kResponse
+} = require('./symbols')
+
 class Felid {
   constructor (options = {}) {
-    this.option = {
+    this[kOption] = {
       routeOptions: {},
       ...options
     }
 
     this.address = null
-    this.hooks = new Hook()
-    this.request = Request.init()
-    this.response = Response.init(this)
     this.router = router({
       defaultRoute: (req, res) => {
         res.statusCode = 404
         res.end()
       },
-      ...this.option.routeOptions
+      ...this[kOption].routeOptions
     })
-    this.errorHandler = handleError.bind(this)
+
+    this[kHooks] = new Hook()
+    this[kRequest] = Request.init()
+    this[kResponse] = Response.init(this)
+    this[kErrorHandler] = handleError.bind(this)
   }
 
   // decorate
@@ -40,11 +49,11 @@ class Felid {
   }
 
   decorateRequest (key, value) {
-    buildDecorator(this.request, key, value)
+    buildDecorator(this[kRequest], key, value)
   }
 
   decorateResponse (key, value) {
-    buildDecorator(this.response, key, value)
+    buildDecorator(this[kResponse], key, value)
   }
 
   hasDecorator (key) {
@@ -52,16 +61,16 @@ class Felid {
   }
 
   hasRequestDecorator (key) {
-    return checkDecoratorExists(this.request, key)
+    return checkDecoratorExists(this[kRequest], key)
   }
 
   hasResponseDecorator (key) {
-    return checkDecoratorExists(this.response, key)
+    return checkDecoratorExists(this[kResponse], key)
   }
 
   // hook
   hook (hookName, url, ...handlers) {
-    this.hooks.add(hookName, url, ...handlers)
+    this[kHooks].add(hookName, url, ...handlers)
   }
 
   preRequest (url, ...handlers) {
@@ -102,7 +111,7 @@ class Felid {
   // error handle
   onError (fn) {
     assert.strictEqual(typeof fn, 'function', 'Error handler must be a function')
-    this.errorHandler = fn.bind(this)
+    this[kErrorHandler] = fn.bind(this)
   }
 }
 
@@ -128,15 +137,15 @@ function buildHanlder (ctx, url, handler) {
   return function (req, res, params) {
     let request, response
     async function buildObjs (req, res, params) {
-      request = await Request.build(ctx.request, req, params)
-      response = Response.build(ctx.response, request, res, url)
+      request = await Request.build(ctx[kRequest], req, params)
+      response = Response.build(ctx[kResponse], request, res, url)
       return Promise.resolve()
     }
-    ctx.hooks.run(HOOK_PRE_REQUEST, url, req, res)
+    ctx[kHooks].run(HOOK_PRE_REQUEST, url, req, res)
       .then(() => buildObjs(req, res, params))
-      .then(() => ctx.hooks.run(HOOK_MIDDLE, url, request, response))
+      .then(() => ctx[kHooks].run(HOOK_MIDDLE, url, request, response))
       .then(() => handler(request, response))
-      .catch(e => ctx.errorHandler(e, request || req, response || res))
+      .catch(e => ctx[kErrorHandler](e, request || req, response || res))
   }
 }
 
