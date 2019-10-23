@@ -19,7 +19,8 @@ const {
   kHooks,
   kRequest,
   kResponse,
-  kRouter
+  kRouter,
+  kServer
 } = require('./symbols')
 
 class Felid {
@@ -30,8 +31,8 @@ class Felid {
     }
 
     this.address = null
-    this.server = null
-    
+    this[kServer] = null
+
     this[kErrorHandler] = handleError.bind(this)
     this[kHooks] = new Hook()
     this[kRequest] = Request.init()
@@ -89,8 +90,8 @@ class Felid {
 
   // listen
   listen (...args) {
-    this.server = server(this[kRouter].lookup, ...args)
-    this.address = this.server.address()
+    this[kServer] = server(this[kRouter].lookup, ...args)
+    this.address = this[kServer].address()
   }
 
   lookup (req, res) {
