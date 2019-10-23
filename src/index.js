@@ -20,6 +20,7 @@ class Felid {
       ...options
     }
 
+    this.address = null
     this.hooks = new Hook()
     this.request = Request.init()
     this.response = Response.init(this)
