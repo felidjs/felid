@@ -115,8 +115,8 @@ module.exports = Felid
 function buildHanlder (ctx, url, handler) {
   let request, response
   async function buildObjs (req, res, params) {
-    request = await Request.build(req, params)
-    response = Response.build(request, res, url)
+    request = await Request.build(ctx.request, req, params)
+    response = Response.build(ctx.response, request, res, url)
     return Promise.resolve()
   }
   return function (req, res, params) {

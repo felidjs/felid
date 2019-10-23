@@ -25,8 +25,8 @@ const Request = {
   }
 }
 
-async function build (req, params) {
-  const request = Object.create(Request)
+async function build (proto, req, params) {
+  const request = Object.create(proto)
   request.req = req
   const queryPrefix = req.url.indexOf('?')
   if (queryPrefix >= 0) {
@@ -70,7 +70,7 @@ function parseBody (req, body) {
 
 module.exports = {
   init: function () {
-    return Request
+    return Object.create(Request)
   },
   build
 }

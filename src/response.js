@@ -67,8 +67,8 @@ const Response = {
   }
 }
 
-function build (request, res, url) {
-  const response = Object.create(Response)
+function build (proto, request, res, url) {
+  const response = Object.create(proto)
   response.request = request
   response.res = res
   response.url = url
@@ -82,8 +82,9 @@ function onSend (response, payload) {
 
 module.exports = {
   init: function (ctx) {
-    Response.context = ctx
-    return Response
+    const response = Object.create(Response)
+    response.context = ctx
+    return response
   },
   build
 }
