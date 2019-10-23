@@ -105,18 +105,17 @@ class Felid {
   }
 }
 
-const httpMethods = [
+const supportedHttpMethods = [
   'delete',
   'get',
   'head',
   'options',
   'patch',
   'post',
-  'put',
-  'trace'
+  'put'
 ]
 
-httpMethods.forEach(method => {
+supportedHttpMethods.forEach(method => {
   Felid.prototype[method] = function (url, handler, store) {
     return this.router[method](url, buildHanlder(this, url, handler), store)
   }

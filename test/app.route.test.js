@@ -1,6 +1,7 @@
 const injectar = require('injectar')
 const Felid = require('../src')
 
+// on
 test('felid.on should send response properly', () => {
   const instance = new Felid()
   instance.on('get', '/test', (req, res) => {
@@ -16,19 +17,19 @@ test('felid.on should send response properly', () => {
     })
 })
 
-const httpMethods = [
+const supportedHttpMethods = [
   'delete',
   'get',
   'head',
   'options',
   'patch',
   'post',
-  'put',
-  'trace'
+  'put'
 ]
 
+// all
 test('felid.all should add handler to all http methods', () => {
-  httpMethods.forEach(method => {
+  supportedHttpMethods.forEach(method => {
     const instance = new Felid()
     instance.all('/test', (req, res) => {
       res.header('method', req.method).send()
@@ -44,10 +45,11 @@ test('felid.all should add handler to all http methods', () => {
   })
 })
 
+// http methods
 test('felid uses correct http method', () => {
   const instance = new Felid()
   
-  httpMethods.forEach(method => {
+  supportedHttpMethods.forEach(method => {
     instance[method]('/test', (req, res) => {
       res.header('method', req.method).send()
     })
