@@ -46,6 +46,18 @@ class Felid {
     buildDecorator(this.response, key, value)
   }
 
+  hasDecorator (key) {
+    return checkDecoratorExists(this, key)
+  }
+
+  hasRequestDecorator (key) {
+    return checkDecoratorExists(this.request, key)
+  }
+
+  hasResponseDecorator (key) {
+    return checkDecoratorExists(this.response, key)
+  }
+
   // hook
   hook (hookName, url, ...handlers) {
     this.hooks.add(hookName, url, ...handlers)
@@ -137,6 +149,11 @@ function buildDecorator (instance, key, value) {
   instance[key] = value
 }
 
+function checkDecoratorExists (instance, key) {
+  assert.notEqual(key, undefined, 'The decorator name should not be undefined')
+  return key in instance
+}
+
 function handleError (err, req, res) {
   if (res instanceof http.ServerResponse) {
     res.statusCode = 500
@@ -145,3 +162,8 @@ function handleError (err, req, res) {
   }
   res.code(500).send(err.message || res.code())
 }
+function checkDecoratorExists (instance, key) {
+  assert.notEqual(key, undefined, 'The decorator name should not be undefined')
+  return key in instance
+}
+

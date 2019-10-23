@@ -90,3 +90,30 @@ test('felid.decorateResponse should throw if the Response object already has a p
     instance.decorateResponse('key', 'another value')
   }).toThrow()
 })
+
+// hasDecorator
+test('felid.hasDecorator should return if the given decorator exists in the Felid instance', () => {
+  const instance = new Felid()
+  instance.decorate('key', 'value')
+
+  expect(instance.hasDecorator('key')).toBe(true)
+  expect(instance.hasDecorator('noThisKey')).toBe(false)
+})
+
+// hasRequestDecorator
+test('felid.hasRequestDecorator should return if the given decorator exists in the Request object', () => {
+  const instance = new Felid()
+  instance.decorateRequest('key', 'value')
+
+  expect(instance.hasRequestDecorator('key')).toBe(true)
+  expect(instance.hasRequestDecorator('noThisKey')).toBe(false)
+})
+
+// hasResponseDecorator
+test('felid.hasResponseDecorator should return if the given decorator exists in the Response object', () => {
+  const instance = new Felid()
+  instance.decorateResponse('key', 'value')
+
+  expect(instance.hasResponseDecorator('key')).toBe(true)
+  expect(instance.hasResponseDecorator('noThisKey')).toBe(false)
+})
