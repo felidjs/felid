@@ -94,13 +94,13 @@ class Felid {
 
   // plugin
   plugin (fn, option) {
-    assert.equal(typeof fn, 'function', 'Handler for plugin must be a function')
+    assert.strictEqual(typeof fn, 'function', 'Handler for plugin must be a function')
     fn(this, option)
   }
 
   // error handle
   onError (fn) {
-    assert.equal(typeof fn, 'function', 'Error handler must be a function')
+    assert.strictEqual(typeof fn, 'function', 'Error handler must be a function')
     this.errorHandler = fn.bind(this)
   }
 }
@@ -143,14 +143,14 @@ function buildHanlder (ctx, url, handler) {
 }
 
 function buildDecorator (instance, key, value) {
-  assert.notEqual(key, undefined, 'The key for a decorator should not be undefined')
-  assert.notEqual(value, undefined, `The value for a decorator should not be undefined`)
+  assert.notStrictEqual(key, undefined, 'The key for a decorator should not be undefined')
+  assert.notStrictEqual(value, undefined, 'The value for a decorator should not be undefined')
   assert.ok(!(key in instance), `The property named "${key}" already exists`)
   instance[key] = value
 }
 
 function checkDecoratorExists (instance, key) {
-  assert.notEqual(key, undefined, 'The decorator name should not be undefined')
+  assert.notStrictEqual(key, undefined, 'The decorator name should not be undefined')
   return key in instance
 }
 
@@ -162,8 +162,3 @@ function handleError (err, req, res) {
   }
   res.code(500).send(err.message || res.code())
 }
-function checkDecoratorExists (instance, key) {
-  assert.notEqual(key, undefined, 'The decorator name should not be undefined')
-  return key in instance
-}
-

@@ -32,7 +32,7 @@ Hooks.prototype.add = function (hookName, url, ...handlers) {
   } else {
     assert.ok(Array.isArray(url), 'Url attached to the hook must be a string or an array of string')
     url.forEach(path => {
-      assert.equal(typeof path, 'string', 'Url in array attached to the hook must be a string')
+      assert.strictEqual(typeof path, 'string', 'Url in array attached to the hook must be a string')
       this.add(hookName, path, ...handlers)
     })
   }
@@ -60,7 +60,7 @@ function addHandlers (map, name, handlers) {
   }
   const arr = map.get(name)
   handlers.forEach(handler => {
-    assert.equal(typeof handler, 'function', `Handler for '${name}' hook should be a function`)
+    assert.strictEqual(typeof handler, 'function', `Handler for '${name}' hook should be a function`)
     arr.push(handler)
   })
 }
