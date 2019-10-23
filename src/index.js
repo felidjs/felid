@@ -36,6 +36,7 @@ class Felid {
       },
       ...this[kOption].routeOptions
     })
+    this.server = null
 
     this[kHooks] = new Hook()
     this[kRequest] = Request.init()
