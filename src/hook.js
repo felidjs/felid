@@ -3,7 +3,7 @@ const {
   HOOK_PRE_REQUEST,
   HOOK_MIDDLE,
   HOOK_POST_RESPONSE
-} = require('./constance')
+} = require('./constants')
 
 const availableHooks = [
   HOOK_PRE_REQUEST,

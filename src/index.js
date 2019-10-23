@@ -11,7 +11,7 @@ const {
   HOOK_PRE_REQUEST,
   HOOK_MIDDLE,
   HOOK_POST_RESPONSE
-} = require('./constance')
+} = require('./constants')
 
 class Felid {
   constructor (options = {}) {

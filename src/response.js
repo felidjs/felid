@@ -1,6 +1,6 @@
 const {
   HOOK_POST_RESPONSE
-} = require('./constance')
+} = require('./constants')
 
 const Response = {
   code (code) {
