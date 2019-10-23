@@ -18,7 +18,8 @@ const {
   kErrorHandler,
   kHooks,
   kRequest,
-  kResponse
+  kResponse,
+  kRouter
 } = require('./symbols')
 
 class Felid {
@@ -29,19 +30,19 @@ class Felid {
     }
 
     this.address = null
-    this.router = router({
+    this.server = null
+    
+    this[kErrorHandler] = handleError.bind(this)
+    this[kHooks] = new Hook()
+    this[kRequest] = Request.init()
+    this[kResponse] = Response.init(this)
+    this[kRouter] = router({
       defaultRoute: (req, res) => {
         res.statusCode = 404
         res.end()
       },
       ...this[kOption].routeOptions
     })
-    this.server = null
-
-    this[kHooks] = new Hook()
-    this[kRequest] = Request.init()
-    this[kResponse] = Response.init(this)
-    this[kErrorHandler] = handleError.bind(this)
   }
 
   // decorate
@@ -88,19 +89,21 @@ class Felid {
 
   // listen
   listen (...args) {
-    this.server = server((req, res) => {
-      this.router.lookup(req, res)
-    }, ...args)
+    this.server = server(this[kRouter].lookup, ...args)
     this.address = this.server.address()
+  }
+
+  lookup (req, res) {
+    return this[kRouter].lookup(req, res)
   }
 
   // route
   on (method, url, handler, store) {
-    return this.router.on(method.toUpperCase(), url, buildHanlder(this, url, handler), store)
+    return this[kRouter].on(method.toUpperCase(), url, buildHanlder(this, url, handler), store)
   }
 
   all (url, handler, store) {
-    return this.router.all(url, buildHanlder(this, url, handler), store)
+    return this[kRouter].all(url, buildHanlder(this, url, handler), store)
   }
 
   // plugin
@@ -128,7 +131,7 @@ const supportedHttpMethods = [
 
 supportedHttpMethods.forEach(method => {
   Felid.prototype[method] = function (url, handler, store) {
-    return this.router[method](url, buildHanlder(this, url, handler), store)
+    return this[kRouter][method](url, buildHanlder(this, url, handler), store)
   }
 })
 

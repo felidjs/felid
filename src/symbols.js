@@ -4,5 +4,6 @@ module.exports = {
   kErrorHandler: Symbol('felid.errorHandler'),
   kHooks: Symbol('felid.hooks'),
   kRequest: Symbol('felid.request'),
-  kResponse: Symbol('felid.response')
+  kResponse: Symbol('felid.response'),
+  kRouter: Symbol('felid.router')
 }

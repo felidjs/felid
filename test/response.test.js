@@ -7,7 +7,7 @@ test('response.code should set correct status code', () => {
     res.code(600).send()
   })
 
-  injectar(instance.router.lookup.bind(instance.router))
+  injectar(instance.lookup.bind(instance))
     .get('/test')
     .end((err, res) => {
       expect(err).toBe(null)
@@ -28,7 +28,7 @@ test('response.redirect should redirect correctly', () => {
     res.send('dest')
   })
 
-  const inject = injectar(instance.router.lookup.bind(instance.router))
+  const inject = injectar(instance.lookup.bind(instance))
   inject
     .get('/test')
     .end((err, res) => {
@@ -59,7 +59,7 @@ test('response.send should set content-type correctly', () => {
     res.send({ json: 'data' })
   })
 
-  const inject = injectar(instance.router.lookup.bind(instance.router))
+  const inject = injectar(instance.lookup.bind(instance))
   inject
     .get('/type-string')
     .end((err, res) => {
