@@ -133,7 +133,7 @@ function buildHanlder (ctx, url, handler) {
 function buildDecorator (instance, key, value) {
   assert.notEqual(key, undefined, 'The key for a decorator should not be undefined')
   assert.notEqual(value, undefined, `The value for a decorator should not be undefined`)
-  assert.ok(!instance.hasOwnProperty(key), `The property named "${key}" already exists`)
+  assert.ok(!(key in instance), `The property named "${key}" already exists`)
   instance[key] = value
 }
 
