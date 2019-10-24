@@ -8,7 +8,7 @@ test('felid.on should send response properly', () => {
     res.send('test')
   })
 
-  injectar(instance.lookup.bind(instance))
+  injectar(instance.lookup())
     .get('/test')
     .end((err, res) => {
       expect(err).toBe(null)
@@ -34,7 +34,7 @@ test('felid.all should add handler to all http methods', () => {
     res.header('method', req.method).send()
   })
 
-  const inject = injectar(instance.lookup.bind(instance))
+  const inject = injectar(instance.lookup())
   supportedHttpMethods.forEach(method => {
     inject[method]('/test')
       .end((err, res) => {
@@ -54,7 +54,7 @@ test('felid uses correct http method', () => {
     })
   })
   
-  const inject = injectar(instance.lookup.bind(instance))
+  const inject = injectar(instance.lookup())
   supportedHttpMethods.forEach(method => {
     inject[method]('/test')
       .end((err, res) => {

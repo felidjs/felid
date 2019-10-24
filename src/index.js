@@ -90,12 +90,12 @@ class Felid {
 
   // listen
   listen (...args) {
-    this[kServer] = server(this[kRouter].lookup, ...args)
+    this[kServer] = server(this.lookup(), ...args)
     this.address = this[kServer].address()
   }
 
-  lookup (req, res) {
-    return this[kRouter].lookup(req, res)
+  lookup () {
+    return (req, res) => this[kRouter].lookup(req, res)
   }
 
   // route

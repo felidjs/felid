@@ -1,13 +1,14 @@
 const injectar = require('injectar')
 const Felid = require('../src')
 
+// code
 test('response.code should set correct status code', () => {
   const instance = new Felid()
   instance.on('get', '/test', (req, res) => {
     res.code(600).send()
   })
 
-  injectar(instance.lookup.bind(instance))
+  injectar(instance.lookup())
     .get('/test')
     .end((err, res) => {
       expect(err).toBe(null)
@@ -15,6 +16,7 @@ test('response.code should set correct status code', () => {
     })
 })
 
+// redirect
 test('response.redirect should redirect correctly', () => {
   const instance = new Felid()
   
@@ -28,7 +30,7 @@ test('response.redirect should redirect correctly', () => {
     res.send('dest')
   })
 
-  const inject = injectar(instance.lookup.bind(instance))
+  const inject = injectar(instance.lookup())
   inject
     .get('/test')
     .end((err, res) => {
@@ -46,6 +48,7 @@ test('response.redirect should redirect correctly', () => {
     })
 })
 
+// send
 test('response.send should set content-type correctly', () => {
   const instance = new Felid()
   
@@ -59,7 +62,7 @@ test('response.send should set content-type correctly', () => {
     res.send({ json: 'data' })
   })
 
-  const inject = injectar(instance.lookup.bind(instance))
+  const inject = injectar(instance.lookup())
   inject
     .get('/type-string')
     .end((err, res) => {
