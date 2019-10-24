@@ -11,10 +11,11 @@ const availableHooks = [
   HOOK_POST_RESPONSE
 ]
 
-const hookMap = new Map()
-const routeHookMap = new Map()
 
-function Hooks () {}
+function Hooks () {
+  this.hookMap = new Map()
+  this.routeHookMap = new Map()
+}
 
 Hooks.prototype.add = function (hookName, url, ...handlers) {
   if (typeof url === 'function') {
@@ -23,12 +24,12 @@ Hooks.prototype.add = function (hookName, url, ...handlers) {
   }
   assert.ok(availableHooks.includes(hookName), `Invalid hook: ${hookName}`)
   if (url === undefined) {
-    addHandlers(hookMap, hookName, handlers)
+    addHandlers(this.hookMap, hookName, handlers)
   } else if (typeof url === 'string') {
-    if (!routeHookMap.has(url)) {
-      routeHookMap.set(url, new Map())
+    if (!this.routeHookMap.has(url)) {
+      this.routeHookMap.set(url, new Map())
     }
-    addHandlers(routeHookMap.get(url), hookName, handlers)
+    addHandlers(this.routeHookMap.get(url), hookName, handlers)
   } else {
     assert.ok(Array.isArray(url), 'Url attached to the hook must be a string or an array of string')
     url.forEach(path => {
@@ -39,8 +40,13 @@ Hooks.prototype.add = function (hookName, url, ...handlers) {
 }
 
 Hooks.prototype.run = function (hookName, url, ...args) {
-  if (!hookMap.has(hookName)) return onHookEnd(hookName)
-  const fns = concatHooks(hookName, url)
+  if (!this.hookMap.has(hookName) && !this.routeHookMap.has(url)) {
+    return onHookEnd(hookName)
+  }
+  const fns = concatHooks(this.hookMap, this.routeHookMap, hookName, url)
+  if (!fns || !fns.length) {    
+    return onHookEnd(hookName)
+  }
   let index = 0
   async function next () {
     if (typeof fns[index] === 'function') {
@@ -65,15 +71,12 @@ function addHandlers (map, name, handlers) {
   })
 }
 
-function concatHooks (name, url) {
+function concatHooks (hookMap, routeHookMap, name, url) {
+  const globalHooks = hookMap.get(name) || []
   if (!url || !routeHookMap.has(url)) {
-    return hookMap.get(name)
+    return globalHooks
   }
-  const routeHook = routeHookMap.get(url)
-  if (!routeHook.has(name)) {
-    return hookMap.get(name)
-  }
-  return hookMap.get(name).concat(routeHook.get(name))
+  return globalHooks.concat(routeHookMap.get(url).get(name))
 }
 
 function onHookEnd (name) {
