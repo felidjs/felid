@@ -35,7 +35,7 @@ test('felid.decorateRequest should add new property to the Request object', () =
   instance.decorateRequest('key', 'value')
   instance.decorateRequest('key2', 'value2')
 
-  instance.on('get', '/test', (req, res) => {
+  instance.get('/test', (req, res) => {
     expect(req.key).toBe('value')
     expect(req.key2).toBe('value2')
   })
@@ -66,7 +66,7 @@ test('felid.decorateResponse should add new property to the Response object', ()
   instance.decorateResponse('key', 'value')
   instance.decorateResponse('key2', 'value2')
 
-  instance.on('get', '/test', (req, res) => {
+  instance.get('/test', (req, res) => {
     expect(res.key).toBe('value')
     expect(res.key2).toBe('value2')
   })

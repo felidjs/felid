@@ -4,7 +4,7 @@ const Felid = require('../src')
 // code
 test('response.code should set correct status code', () => {
   const instance = new Felid()
-  instance.on('get', '/test', (req, res) => {
+  instance.get('/test', (req, res) => {
     res.code(600).send()
   })
 
@@ -18,9 +18,57 @@ test('response.code should set correct status code', () => {
 
 test('response.code should return the correct status code', () => {
   const instance = new Felid()
-  instance.on('get', '/test', (req, res) => {
+  instance.get('/test', (req, res) => {
     res.code(600)
     expect(res.code()).toBe(600)
+    res.send()
+  })
+
+  injectar(instance.lookup())
+    .get('/test')
+    .end((err, res) => {
+      expect(err).toBe(null)
+    })
+})
+
+// header
+test('response.header should set the given header correctly', () => {
+  const instance = new Felid()
+  instance.get('/test', (req, res) => {
+    res.header('foo', 'bar').send()
+  })
+
+  injectar(instance.lookup())
+    .get('/test')
+    .end((err, res) => {
+      expect(err).toBe(null)
+      expect(res.headers.foo).toBe('bar')
+    })
+})
+
+test('response.header should set the given headers correctly', () => {
+  const instance = new Felid()
+  instance.get('/test', (req, res) => {
+    res.header({
+      foo: 'bar',
+      bar: 'foo'
+    }).send('test')
+  })
+
+  injectar(instance.lookup())
+    .get('/test')
+    .end((err, res) => {
+      expect(err).toBe(null)
+      expect(res.headers.foo).toBe('bar')
+      expect(res.headers.bar).toBe('foo')
+    })
+})
+
+test('response.header should return the given header value', () => {
+  const instance = new Felid()
+  instance.get('/test', (req, res) => {
+    res.header('foo', 'bar')
+    expect(res.header('foo')).toBe('bar')
     res.send()
   })
 

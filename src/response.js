@@ -19,8 +19,14 @@ const Response = {
   },
 
   header (key, value) {
-    if (value === undefined) {
+    if (typeof key === 'string' && value === undefined) {
       return this.res.getHeader(key)
+    }
+    if (key && typeof key === 'object') {
+      for (const k in key) {
+        this.header(k, key[k])
+      }
+      return this
     }
     this.res.setHeader(key, value)
     return this
