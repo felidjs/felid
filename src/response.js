@@ -26,10 +26,6 @@ const Response = {
     return this
   },
 
-  set headers (value) {
-    this.res.headers = value
-  },
-
   get headers () {
     return this.res.headers
   },

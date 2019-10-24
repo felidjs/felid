@@ -11,7 +11,6 @@ const availableHooks = [
   HOOK_POST_RESPONSE
 ]
 
-
 function Hooks () {
   this.hookMap = new Map()
   this.routeHookMap = new Map()
@@ -44,7 +43,7 @@ Hooks.prototype.run = function (hookName, url, ...args) {
     return onHookEnd(hookName)
   }
   const fns = concatHooks(this.hookMap, this.routeHookMap, hookName, url)
-  if (!fns || !fns.length) {    
+  if (!fns || !fns.length) {
     return onHookEnd(hookName)
   }
   let index = 0
