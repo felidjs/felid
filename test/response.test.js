@@ -16,6 +16,21 @@ test('response.code should set correct status code', () => {
     })
 })
 
+test('response.code should return the correct status code', () => {
+  const instance = new Felid()
+  instance.on('get', '/test', (req, res) => {
+    res.code(600)
+    expect(res.code()).toBe(600)
+    res.send()
+  })
+
+  injectar(instance.lookup())
+    .get('/test')
+    .end((err, res) => {
+      expect(err).toBe(null)
+    })
+})
+
 // redirect
 test('response.redirect should redirect correctly', () => {
   const instance = new Felid()
