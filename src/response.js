@@ -42,20 +42,21 @@ const Response = {
       code = 302
     }
     this.res.setHeader('location', url)
-    this.code(code).send()
+    this.res.statusCode = code
+    this.send()
   },
 
   send (payload) {
     if (typeof payload === 'string') {
       if (!this.res.hasHeader('content-type')) {
-        this.header('content-type', 'text/plain; charset=utf-8')
+        this.res.setHeader('content-type', 'text/plain; charset=utf-8')
       }
       onSend(this, payload)
       return
     }
     if (Buffer.isBuffer(payload)) {
       if (!this.res.hasHeader('content-type')) {
-        this.header('content-type', 'application/octet-stream')
+        this.res.setHeader('content-type', 'application/octet-stream')
       }
       onSend(this, payload)
       return
