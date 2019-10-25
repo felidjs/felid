@@ -1,8 +1,8 @@
 const injectar = require('injectar')
 const Felid = require('../src')
 
-// on
-test('felid.on should send response properly', () => {
+// on()
+test('felid.on() should send response properly', () => {
   const instance = new Felid()
   instance.on('get', '/test', (req, res) => {
     res.send('test')
@@ -27,8 +27,8 @@ const supportedHttpMethods = [
   'put'
 ]
 
-// all
-test('felid.all should add handler to all http methods', () => {
+// all()
+test('felid.all() should add handler to all http methods', () => {
   const instance = new Felid()
   instance.all('/test', (req, res) => {
     res.header('method', req.method).send()

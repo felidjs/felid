@@ -1,8 +1,8 @@
 const injectar = require('injectar')
 const Felid = require('../src')
 
-// code
-test('response.code should set correct status code', () => {
+// code()
+test('response.code() should set correct status code', () => {
   const instance = new Felid()
   instance.get('/test', (req, res) => {
     res.code(600).send()
@@ -16,7 +16,7 @@ test('response.code should set correct status code', () => {
     })
 })
 
-test('response.code should return the correct status code', () => {
+test('response.code() should return the correct status code', () => {
   const instance = new Felid()
   instance.get('/test', (req, res) => {
     res.code(600)
@@ -31,8 +31,8 @@ test('response.code should return the correct status code', () => {
     })
 })
 
-// header
-test('response.header should set the given header correctly', () => {
+// header()
+test('response.header() should set the given header correctly', () => {
   const instance = new Felid()
   instance.get('/test', (req, res) => {
     res.header('foo', 'bar').send()
@@ -46,7 +46,7 @@ test('response.header should set the given header correctly', () => {
     })
 })
 
-test('response.header should set the given headers correctly', () => {
+test('response.header() should set the given headers correctly', () => {
   const instance = new Felid()
   instance.get('/test', (req, res) => {
     res.header({
@@ -64,7 +64,7 @@ test('response.header should set the given headers correctly', () => {
     })
 })
 
-test('response.header should return the given header value', () => {
+test('response.header() should return the given header value', () => {
   const instance = new Felid()
   instance.get('/test', (req, res) => {
     res.header('foo', 'bar')
@@ -79,8 +79,8 @@ test('response.header should return the given header value', () => {
     })
 })
 
-// redirect
-test('response.redirect should redirect correctly', () => {
+// redirect()
+test('response.redirect() should redirect correctly', () => {
   const instance = new Felid()
   
   instance.get('/test', (req, res) => {
@@ -111,8 +111,8 @@ test('response.redirect should redirect correctly', () => {
     })
 })
 
-// send
-test('response.send should set content-type correctly', () => {
+// send()
+test('response.send() should set content-type correctly', () => {
   const instance = new Felid()
   
   instance.get('/type-string', (req, res) => {

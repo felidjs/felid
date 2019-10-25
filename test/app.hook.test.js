@@ -1,12 +1,12 @@
 const injectar = require('injectar')
 const Felid = require('../src')
 
-// hook
+// hook()
 
-// preRequest
+// preRequest()
 
-// use
-test('felid.use should apply a middleware for all routes', () => {
+// use()
+test('felid.use() should apply a middleware for all routes', () => {
   const instance = new Felid()
   instance.use((req, res) => {
     res.code(201)
@@ -23,7 +23,7 @@ test('felid.use should apply a middleware for all routes', () => {
     })
 })
 
-test('felid.use should apply a middleware for a specific route', () => {
+test('felid.use() should apply a middleware for a specific route', () => {
   const instance = new Felid()
   instance.use('/201', (req, res) => {
     res.code(201)
@@ -48,7 +48,7 @@ test('felid.use should apply a middleware for a specific route', () => {
     })
 })
 
-test('felid.use should apply a middleware for a list of specific routes', () => {
+test('felid.use() should apply a middleware for a list of specific routes', () => {
   const instance = new Felid()
   instance.use(['/201-a', '/201-b'], (req, res) => {
     res.code(201)
@@ -81,7 +81,7 @@ test('felid.use should apply a middleware for a list of specific routes', () => 
     })
 })
 
-test('felid.use should apply both global and route-specific middlewares', () => {
+test('felid.use() should apply both global and route-specific middlewares', () => {
   const instance = new Felid()
   instance.use((req, res) => {
     res.header('foo', 'bar')
@@ -110,7 +110,7 @@ test('felid.use should apply both global and route-specific middlewares', () => 
     })
 })
 
-test('felid.use should apply a list of middlewares', () => {
+test('felid.use() should apply a list of middlewares', () => {
   const instance = new Felid()
   instance.use(
     (req, res) => {
@@ -133,4 +133,4 @@ test('felid.use should apply a list of middlewares', () => {
     })
 })
 
-// postResponse
+// postResponse()

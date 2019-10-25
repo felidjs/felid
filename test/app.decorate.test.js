@@ -1,7 +1,7 @@
 const Felid = require('../src')
 
-// decorate
-test('felid.decorate should add new property to the Felid instance', () => {
+// decorate()
+test('felid.decorate() should add new property to the Felid instance', () => {
   const instance = new Felid()
   instance.decorate('key', 'value')
   instance.decorate('key2', 'value2')
@@ -10,7 +10,7 @@ test('felid.decorate should add new property to the Felid instance', () => {
   expect(instance.key2).toBe('value2')
 })
 
-test('felid.decorate should throw if there is undefined argument', () => {
+test('felid.decorate() should throw if there is undefined argument', () => {
   const instance = new Felid()
   expect(() => {
     instance.decorate()
@@ -20,7 +20,7 @@ test('felid.decorate should throw if there is undefined argument', () => {
   }).toThrow()
 })
 
-test('felid.decorate should throw if the Felid instance already has a property', () => {
+test('felid.decorate() should throw if the Felid instance already has a property', () => {
   const instance = new Felid()
   instance.decorate('key', 'value')
 
@@ -29,8 +29,8 @@ test('felid.decorate should throw if the Felid instance already has a property',
   }).toThrow()
 })
 
-// decorateRequest
-test('felid.decorateRequest should add new property to the Request object', () => {
+// decorateRequest()
+test('felid.decorateRequest() should add new property to the Request object', () => {
   const instance = new Felid()
   instance.decorateRequest('key', 'value')
   instance.decorateRequest('key2', 'value2')
@@ -41,7 +41,7 @@ test('felid.decorateRequest should add new property to the Request object', () =
   })
 })
 
-test('felid.decorateRequest should throw if there is undefined argument', () => {
+test('felid.decorateRequest() should throw if there is undefined argument', () => {
   const instance = new Felid()
   expect(() => {
     instance.decorateRequest()
@@ -51,7 +51,7 @@ test('felid.decorateRequest should throw if there is undefined argument', () => 
   }).toThrow()
 })
 
-test('felid.decorateRequest should throw if the Request object already has a property', () => {
+test('felid.decorateRequest() should throw if the Request object already has a property', () => {
   const instance = new Felid()
   instance.decorateRequest('key', 'value')
 
@@ -60,8 +60,8 @@ test('felid.decorateRequest should throw if the Request object already has a pro
   }).toThrow()
 })
 
-// decorateResponse
-test('felid.decorateResponse should add new property to the Response object', () => {
+// decorateResponse()
+test('felid.decorateResponse() should add new property to the Response object', () => {
   const instance = new Felid()
   instance.decorateResponse('key', 'value')
   instance.decorateResponse('key2', 'value2')
@@ -72,7 +72,7 @@ test('felid.decorateResponse should add new property to the Response object', ()
   })
 })
 
-test('felid.decorateResponse should throw if there is undefined argument', () => {
+test('felid.decorateResponse() should throw if there is undefined argument', () => {
   const instance = new Felid()
   expect(() => {
     instance.decorateResponse()
@@ -82,7 +82,7 @@ test('felid.decorateResponse should throw if there is undefined argument', () =>
   }).toThrow()
 })
 
-test('felid.decorateResponse should throw if the Response object already has a property', () => {
+test('felid.decorateResponse() should throw if the Response object already has a property', () => {
   const instance = new Felid()
   instance.decorateResponse('key', 'value')
 
@@ -91,8 +91,8 @@ test('felid.decorateResponse should throw if the Response object already has a p
   }).toThrow()
 })
 
-// hasDecorator
-test('felid.hasDecorator should return if the given decorator exists in the Felid instance', () => {
+// hasDecorator()
+test('felid.hasDecorator() should return if the given decorator exists in the Felid instance', () => {
   const instance = new Felid()
   instance.decorate('key', 'value')
 
@@ -100,8 +100,8 @@ test('felid.hasDecorator should return if the given decorator exists in the Feli
   expect(instance.hasDecorator('noThisKey')).toBe(false)
 })
 
-// hasRequestDecorator
-test('felid.hasRequestDecorator should return if the given decorator exists in the Request object', () => {
+// hasRequestDecorator()
+test('felid.hasRequestDecorator() should return if the given decorator exists in the Request object', () => {
   const instance = new Felid()
   instance.decorateRequest('key', 'value')
 
@@ -109,8 +109,8 @@ test('felid.hasRequestDecorator should return if the given decorator exists in t
   expect(instance.hasRequestDecorator('noThisKey')).toBe(false)
 })
 
-// hasResponseDecorator
-test('felid.hasResponseDecorator should return if the given decorator exists in the Response object', () => {
+// hasResponseDecorator()
+test('felid.hasResponseDecorator() should return if the given decorator exists in the Response object', () => {
   const instance = new Felid()
   instance.decorateResponse('key', 'value')
 
