@@ -73,17 +73,16 @@ const Response = {
   }
 }
 
-function build (proto, request, res, url) {
+function build (proto, request, res) {
   const response = Object.create(proto)
   response.request = request
   response.res = res
-  response.url = url
   return response
 }
 
 function onSend (response, payload) {
   response.res.end(payload)
-  response.context[kHooks].run(HOOK_POST_RESPONSE, response.url, response.request, response)
+  response.context[kHooks].run(HOOK_POST_RESPONSE, response.request.url, response.request, response)
 }
 
 module.exports = {

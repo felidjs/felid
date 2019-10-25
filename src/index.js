@@ -143,7 +143,7 @@ function buildHanlder (ctx, url, handler) {
     let request, response
     async function buildObjs (req, res, params) {
       request = await Request.build(ctx[kRequest], req, params)
-      response = Response.build(ctx[kResponse], request, res, url)
+      response = Response.build(ctx[kResponse], request, res)
       return Promise.resolve()
     }
     ctx[kHooks].run(HOOK_PRE_REQUEST, url, req, res)
