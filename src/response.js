@@ -1,10 +1,3 @@
-const {
-  HOOK_POST_RESPONSE
-} = require('./constants')
-const {
-  kHooks
-} = require('./symbols')
-
 const Response = {
   code (code) {
     if (code === undefined) {
@@ -82,14 +75,13 @@ function build (proto, request, res) {
 
 function onSend (response, payload) {
   response.res.end(payload)
-  response.context[kHooks].run(HOOK_POST_RESPONSE, response.request.url, response.request, response)
+  // run postResponse hook
+  response.callback(response.request.url, response.request, response)
 }
 
 module.exports = {
-  init: function (ctx) {
-    const response = Object.create(Response)
-    response.context = ctx
-    return response
+  init: function () {
+    return Object.create(Response)
   },
   build
 }

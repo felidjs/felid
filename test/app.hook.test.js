@@ -134,3 +134,18 @@ test('felid.use() should apply a list of middlewares', () => {
 })
 
 // postResponse()
+test('felid.postResponse() should fire after response has been sent', () => {
+  const instance = new Felid()
+  instance.postResponse((req, res) => {
+    expect(res.finished).toBe(true)
+  })
+  instance.get('/test', (req, res) => {
+    res.send('test')
+  })
+
+  injectar(instance.lookup().bind(instance))
+    .get('/test')
+    .end((err, res) => {
+      expect(err).toBe(null)
+    })
+})

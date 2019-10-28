@@ -36,7 +36,7 @@ class Felid {
     this[kErrorHandler] = handleError.bind(this)
     this[kHooks] = new Hook()
     this[kRequest] = Request.init()
-    this[kResponse] = Response.init(this)
+    this[kResponse] = Response.init()
     this[kRouter] = router({
       defaultRoute: (req, res) => {
         res.statusCode = 404
@@ -139,11 +139,15 @@ supportedHttpMethods.forEach(method => {
 module.exports = Felid
 
 function buildHanlder (ctx, url, handler) {
+  const runPostResponse = (url, request, response) => {
+    ctx[kHooks].run(HOOK_POST_RESPONSE, url, request, response)
+  }
   return function (req, res, params) {
     let request, response
     async function buildObjs (req, res, params) {
       request = await Request.build(ctx[kRequest], req, params)
       response = Response.build(ctx[kResponse], request, res)
+      response.callback = runPostResponse
       return Promise.resolve()
     }
     ctx[kHooks].run(HOOK_PRE_REQUEST, url, req, res)
