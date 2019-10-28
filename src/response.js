@@ -1,3 +1,5 @@
+const assert = require('assert')
+
 const Response = {
   code (code) {
     if (code === undefined) {
@@ -74,9 +76,11 @@ function build (proto, request, res) {
 }
 
 function onSend (response, payload) {
-  response.res.end(payload)
-  // run postResponse hook
-  response.callback(response.request.url, response.request, response)
+  assert.strictEqual(response.finished, false, 'The response has already been sent')
+  response.res.end(payload, () => {
+    // run postResponse hook
+    response.callback(response.request.url, response.request, response)
+  })
 }
 
 module.exports = {

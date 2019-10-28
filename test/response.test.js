@@ -145,5 +145,20 @@ test('response.send() should set content-type correctly', () => {
     .end((err, res) => {
       expect(err).toBe(null)
       expect(res.headers['content-type']).toBe('application/json; charset=utf-8')
+
+test('response.send() should throw if called multiple times', () => {
+  const instance = new Felid()
+  instance.get('/test', (req, res) => {
+    res.send('a')
+    expect(() => {
+      res.send('b')
+    }).toThrow()
+  })
+
+  injectar(instance.lookup())
+    .get('/test')
+    .end((err, res) => {
+      expect(err).toBe(null)
+      expect(res.payload).toBe('a')
     })
 })
