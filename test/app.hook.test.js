@@ -15,7 +15,7 @@ test('felid.use() should apply a middleware for all routes', () => {
     res.send('test')
   })
 
-  injectar(instance.lookup().bind(instance))
+  injectar(instance.lookup())
     .get('/test')
     .end((err, res) => {
       expect(err).toBe(null)
@@ -124,12 +124,45 @@ test('felid.use() should apply a list of middlewares', () => {
     res.send('test')
   })
 
-  injectar(instance.lookup().bind(instance))
+  injectar(instance.lookup())
     .get('/test')
     .end((err, res) => {
       expect(err).toBe(null)
       expect(res.statusCode).toBe(201)
       expect(res.headers.foo).toBe('bar')
+    })
+})
+
+test('felid.use() should run middlewares in order as they defined', () => {
+  const instance = new Felid()
+  let order = ''
+  instance.use((req, res) => {
+    order += 'a'
+    res.header('order', order)
+  })
+  instance.use(
+    (req, res) => {
+      order += 'b'
+      res.header('order', order)
+    },
+    (req, res) => {
+      order += 'c'
+      res.header('order', order)
+    }
+  )
+  instance.use((req, res) => {
+    order += 'd'
+    res.header('order', order)
+  })
+  instance.get('/test', (req, res) => {
+    res.send('test')
+  })
+
+  injectar(instance.lookup())
+    .get('/test')
+    .end((err, res) => {
+      expect(err).toBe(null)
+      expect(res.headers.order).toBe('abcd')
     })
 })
 
@@ -143,7 +176,7 @@ test('felid.postResponse() should fire after response has been sent', () => {
     res.send('test')
   })
 
-  injectar(instance.lookup().bind(instance))
+  injectar(instance.lookup())
     .get('/test')
     .end((err, res) => {
       expect(err).toBe(null)

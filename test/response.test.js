@@ -114,15 +114,18 @@ test('response.redirect() should redirect correctly', () => {
 // send()
 test('response.send() should set content-type correctly', () => {
   const instance = new Felid()
+  const stringMsg = 'string'
+  const bufferMsg = 'a buffer'
+  const jsonMsg = { json: 'data' }
   
   instance.get('/type-string', (req, res) => {
-    res.send('string')
+    res.send(stringMsg)
   })
   instance.get('/type-buffer', (req, res) => {
-    res.send(Buffer.from('a buffer'))
+    res.send(Buffer.from(bufferMsg))
   })
   instance.get('/type-json', (req, res) => {
-    res.send({ json: 'data' })
+    res.send(jsonMsg)
   })
 
   const inject = injectar(instance.lookup())
@@ -131,20 +134,25 @@ test('response.send() should set content-type correctly', () => {
     .end((err, res) => {
       expect(err).toBe(null)
       expect(res.headers['content-type']).toBe('text/plain; charset=utf-8')
+      expect(res.payload).toBe(stringMsg)
     })
-  
+
   inject
     .get('/type-buffer')
     .end((err, res) => {
       expect(err).toBe(null)
       expect(res.headers['content-type']).toBe('application/octet-stream')
+      expect(res.payload).toBe(bufferMsg)
     })
-  
+
   inject
     .get('/type-json')
     .end((err, res) => {
       expect(err).toBe(null)
       expect(res.headers['content-type']).toBe('application/json; charset=utf-8')
+      expect(res.payload).toBe(JSON.stringify(jsonMsg))
+    })
+})
 
 test('response.send() should throw if called multiple times', () => {
   const instance = new Felid()
