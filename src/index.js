@@ -142,19 +142,21 @@ function buildHanlder (ctx, url, handler) {
   const runPostResponse = (url, request, response) => {
     ctx[kHooks].run(HOOK_POST_RESPONSE, url, request, response)
   }
-  return function (req, res, params) {
+  return async function (req, res, params) {
     let request, response
     async function buildObjs (req, res, params) {
       request = await Request.build(ctx[kRequest], req, params)
       response = Response.build(ctx[kResponse], request, res)
       response.callback = runPostResponse
-      return Promise.resolve()
     }
-    ctx[kHooks].run(HOOK_PRE_REQUEST, url, req, res)
-      .then(() => buildObjs(req, res, params))
-      .then(() => ctx[kHooks].run(HOOK_MIDDLE, url, request, response))
-      .then(() => handler(request, response))
-      .catch(e => ctx[kErrorHandler](e, request || req, response || res))
+    try {
+      await ctx[kHooks].run(HOOK_PRE_REQUEST, url, req, res)
+      await buildObjs(req, res, params)
+      await ctx[kHooks].run(HOOK_MIDDLE, url, request, response)
+      handler(request, response)
+    } catch (e) {
+      ctx[kErrorHandler](e, request || req, response || res)
+    }
   }
 }
 

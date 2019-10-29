@@ -138,23 +138,20 @@ test('felid.use() should run middlewares in order as they defined', () => {
   let order = ''
   instance.use((req, res) => {
     order += 'a'
-    res.header('order', order)
   })
   instance.use(
     (req, res) => {
       order += 'b'
-      res.header('order', order)
     },
     (req, res) => {
       order += 'c'
-      res.header('order', order)
     }
   )
   instance.use((req, res) => {
     order += 'd'
-    res.header('order', order)
   })
   instance.get('/test', (req, res) => {
+    order += 'e'
     res.send('test')
   })
 
@@ -162,7 +159,33 @@ test('felid.use() should run middlewares in order as they defined', () => {
     .get('/test')
     .end((err, res) => {
       expect(err).toBe(null)
-      expect(res.headers.order).toBe('abcd')
+      expect(order).toBe('abcde')
+    })
+})
+
+test('felid.use() should run middlewares in order as they defined', () => {
+  const instance = new Felid()
+  let order = ''
+  instance.use(
+    (req, res, next) => {
+      order += 'a'
+      next()
+      order += 'c'
+    },
+    (req, res) => {
+      order += 'b'
+    }
+  )
+  instance.get('/test', (req, res) => {
+    order += 'd'
+    res.send('test')
+  })
+
+  injectar(instance.lookup())
+    .get('/test')
+    .end((err, res) => {
+      expect(order).toBe('abcd')
+      expect(err).toBe(null)
     })
 })
 

@@ -14,6 +14,10 @@ const availableHooks = [
 function Hooks () {
   this.hookMap = new Map()
   this.routeHookMap = new Map()
+  this.cache = new Map()
+  availableHooks.forEach(hookName => {
+    this.cache.set(hookName, new Map())
+  })
 }
 
 Hooks.prototype.add = function (hookName, url, ...handlers) {
@@ -38,23 +42,30 @@ Hooks.prototype.add = function (hookName, url, ...handlers) {
   }
 }
 
-Hooks.prototype.run = function (hookName, url, ...args) {
+Hooks.prototype.get = function (hookName, url) {
+  const hookCache = this.cache.get(hookName)
+  function endHooks () {
+    hookCache.set(url, [])
+    return []
+  }
+
+  if (hookCache.has(url)) {
+    return hookCache.get(url)
+  }
   if (!this.hookMap.has(hookName) && !this.routeHookMap.has(url)) {
-    return onHookEnd(hookName)
+    return endHooks()
   }
   const fns = concatHooks(this.hookMap, this.routeHookMap, hookName, url)
   if (!fns || !fns.length) {
-    return onHookEnd(hookName)
+    return endHooks()
   }
-  let index = 0
-  async function next () {
-    if (typeof fns[index] === 'function') {
-      await fns[index++](...args, () => {})
-      return next()
-    }
-    return onHookEnd(hookName)
-  }
-  return next()
+  hookCache.set(url, fns)
+  return fns
+}
+
+Hooks.prototype.run = function (hookName, url, ...args) {
+  const fns = this.get(hookName, url)
+  return runHooks(fns, ...args)
 }
 
 module.exports = Hooks
@@ -78,6 +89,14 @@ function concatHooks (hookMap, routeHookMap, name, url) {
   return globalHooks.concat(routeHookMap.get(url).get(name))
 }
 
-function onHookEnd (name) {
-  return Promise.resolve()
+function runHooks (hooks, ...args) {
+  let index = 0
+  async function next () {
+    if (typeof hooks[index] === 'function') {
+      await hooks[index++](...args, next)
+      return next()
+    }
+    return Promise.resolve()
+  }
+  return next()
 }
