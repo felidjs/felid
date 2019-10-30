@@ -42,6 +42,7 @@ const Response = {
   },
 
   send (payload) {
+    if (this.finished) return
     if (typeof payload === 'string') {
       if (!this.res.hasHeader('content-type')) {
         this.res.setHeader('content-type', 'text/plain; charset=utf-8')
