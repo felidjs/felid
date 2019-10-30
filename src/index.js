@@ -37,13 +37,7 @@ class Felid {
     this[kHooks] = new Hook()
     this[kRequest] = Request.init()
     this[kResponse] = Response.init()
-    this[kRouter] = router({
-      defaultRoute: (req, res) => {
-        res.statusCode = 404
-        res.end()
-      },
-      ...this[kOption].routeOptions
-    })
+    this[kRouter] = router(this[kOption].routeOptions)
   }
 
   // decorate
