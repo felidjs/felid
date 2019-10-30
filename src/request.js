@@ -58,7 +58,7 @@ function buildBody (req) {
 }
 
 function parseBody (req, body) {
-  if (req.headers['content-type'] === 'application/json') {
+  if (req.headers['content-type'] && req.headers['content-type'].indexOf('application/json') > -1) {
     try {
       body = JSON.parse(body)
     } catch (e) {

@@ -1,6 +1,24 @@
 const injectar = require('injectar')
 const Felid = require('../src')
 
+// body
+test('request.body should parse the request body if content-type is application/json', () => {
+  const instance = new Felid()
+  const jsonMsg = { json: 'data' }
+  instance.post('/test', (req, res) => {
+    expect(req.body).toStrictEqual(jsonMsg)
+    res.send()
+  })
+
+  injectar(instance.lookup())
+    .post('/test')
+    .headers({ 'content-type': 'application/json' })
+    .body(jsonMsg)
+    .end((err, res) => {
+      expect(err).toBe(null)
+    })
+})
+
 // method
 test('request.method should indicate the request method', () => {
   const instance = new Felid()
