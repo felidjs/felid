@@ -100,11 +100,11 @@ class Felid {
 
   // route
   on (method, url, handler, store) {
-    return this[kRouter].on(method.toUpperCase(), url, buildHanlder(this, url, handler), store)
+    return this[kRouter].on(method.toUpperCase(), url, buildHandler(this, url, handler), store)
   }
 
   all (url, handler, store) {
-    return this[kRouter].all(url, buildHanlder(this, url, handler), store)
+    return this[kRouter].all(url, buildHandler(this, url, handler), store)
   }
 
   // plugin
@@ -132,13 +132,13 @@ const supportedHttpMethods = [
 
 supportedHttpMethods.forEach(method => {
   Felid.prototype[method] = function (url, handler, store) {
-    return this[kRouter][method](url, buildHanlder(this, url, handler), store)
+    return this[kRouter][method](url, buildHandler(this, url, handler), store)
   }
 })
 
 module.exports = Felid
 
-function buildHanlder (ctx, url, handler) {
+function buildHandler (ctx, url, handler) {
   const runPostResponse = (url, request, response) => {
     ctx[kHooks].run(HOOK_POST_RESPONSE, url, request, response)
   }
