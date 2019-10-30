@@ -42,14 +42,14 @@ class Hooks {
       })
     }
   }
-  
+
   get (hookName, url) {
     const hookCache = this.cache.get(hookName)
     function endHooks () {
       hookCache.set(url, [])
       return []
     }
-  
+
     if (hookCache.has(url)) {
       return hookCache.get(url)
     }
@@ -60,7 +60,7 @@ class Hooks {
     hookCache.set(url, fns)
     return fns
   }
-  
+
   run (hookName, url, ...args) {
     const fns = this.get(hookName, url)
     return runHooks(fns, ...args)

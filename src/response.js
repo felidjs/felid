@@ -78,10 +78,7 @@ function build (proto, request, res) {
 
 function onSend (response, payload) {
   assert.strictEqual(response.finished, false, 'The response has already been sent')
-  response.res.end(payload, () => {
-    // run postResponse hook
-    response.callback(response.request.url, response.request, response)
-  })
+  response.res.end(payload)
 }
 
 module.exports = {
