@@ -40,6 +40,10 @@ class Felid {
     this[kRouter] = router(this[kOption].routeOptions)
   }
 
+  get listening () {
+    return this[kServer] ? this[kServer].listening : false
+  }
+
   // decorate
   decorate (key, value) {
     buildDecorator(this, key, value)
