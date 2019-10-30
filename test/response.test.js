@@ -150,7 +150,7 @@ test('response.send() should set content-type correctly', () => {
     .end((err, res) => {
       expect(err).toBe(null)
       expect(res.headers['content-type']).toBe('application/json; charset=utf-8')
-      expect(res.payload).toBe(JSON.stringify(jsonMsg))
+      expect(res.json()).toStrictEqual(jsonMsg)
     })
 })
 
