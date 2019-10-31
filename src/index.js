@@ -117,6 +117,11 @@ class Felid {
     fn(this, option)
   }
 
+  // bosy parser
+  addParser (type, parser) {
+    this[kParsers].add(type, parser)
+  }
+
   // error handle
   onError (fn) {
     assert.strictEqual(typeof fn, 'function', 'Error handler must be a function')

@@ -6,9 +6,14 @@ class Parser {
     this.parserKeys = []
     this.add('text/plain', defaultTextParser)
     this.add('application/json', defaultJsonParser)
+    this.defaultParser = defaultTextParser
   }
 
   add (type, parser) {
+    if (typeof type === 'function') {
+      this.defaultParser = type
+      return
+    }
     if (Array.isArray(type)) {
       type.forEach(t => {
         this.add(t, parser)
@@ -24,7 +29,7 @@ class Parser {
   get (type) {
     assert.strictEqual(typeof type, 'string', `Type of content-type '${type}' should be a string`)
     if (!type) {
-      return defaultTextParser
+      return this.defaultParser
     }
     for (let i = 0; i < this.parsers.size; ++i) {
       const key = this.parserKeys[i]
@@ -32,7 +37,7 @@ class Parser {
         return this.parsers.get(key)
       }
     }
-    return defaultTextParser
+    return this.defaultParser
   }
 }
 
