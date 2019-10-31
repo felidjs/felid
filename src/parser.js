@@ -3,7 +3,9 @@ const assert = require('assert')
 class Parser {
   constructor () {
     this.parsers = new Map()
-    this.parserKeys = null
+    this.parserKeys = []
+    this.add('text/plain', defaultTextParser)
+    this.add('application/json', defaultJsonParser)
   }
 
   add (type, parser) {
@@ -16,6 +18,7 @@ class Parser {
     assert.strictEqual(typeof type, 'string', `Type of content-type '${type}' should be a string`)
     assert.strictEqual(typeof parser, 'function', `Parser for content-type '${type}' should be a function`)
     this.parsers.set(type, parser)
+    this.parserKeys.push(type)
   }
 
   get (type) {
@@ -23,21 +26,13 @@ class Parser {
     if (!type) {
       return defaultTextParser
     }
-    if (!this.parserKeys) {
-      this.parserKeys = this.parsers.keys()
-    }
-    this.parserKeys.forEach(key => {
+    for (let i = 0; i < this.parsers.size; ++i) {
+      const key = this.parserKeys[i]
       if (type.indexOf(key) > -1) {
         return this.parsers.get(key)
       }
-    })
+    }
     return defaultTextParser
-  }
-
-  prepare () {
-    this.parsers.set('text/plain', defaultTextParser)
-    this.parsers.set('application/json', defaultJsonParser)
-    this.parserKeys = this.parsers.keys()
   }
 }
 
