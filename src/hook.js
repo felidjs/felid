@@ -92,7 +92,10 @@ function runHooks (hooks, ...args) {
   let index = 0
   async function next () {
     if (typeof hooks[index] === 'function') {
-      await hooks[index++](...args, next)
+      const res = await hooks[index++](...args, next)
+      if (res === false) {
+        return Promise.resolve(res)
+      }
       return next()
     }
     return Promise.resolve()

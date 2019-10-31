@@ -28,6 +28,24 @@ test('felid.preRequest() should fire correctly', () => {
     })
 })
 
+test('felid.preRequest() should skip middlewares after return false', () => {
+  const instance = new Felid()
+  instance.preRequest((req, res) => {
+    res.end('hack')
+    return false
+  })
+  instance.get('/test', (req, res) => {
+    res.send('test')
+  })
+
+  injectar(instance.lookup())
+    .get('/test')
+    .end((err, res) => {
+      expect(err).toBe(null)
+      expect(res.payload).toBe('hack')
+    })
+})
+
 // use()
 test('felid.use() should apply a middleware for all routes', () => {
   const instance = new Felid()
@@ -158,23 +176,23 @@ test('felid.use() should apply a list of middlewares', () => {
 
 test('felid.use() should run middlewares in order as they defined', () => {
   const instance = new Felid()
-  let order = ''
+  let msg = ''
   instance.use((req, res) => {
-    order += 'a'
+    msg += 'a'
   })
   instance.use(
     (req, res) => {
-      order += 'b'
+      msg += 'b'
     },
     (req, res) => {
-      order += 'c'
+      msg += 'c'
     }
   )
   instance.use((req, res) => {
-    order += 'd'
+    msg += 'd'
   })
   instance.get('/test', (req, res) => {
-    order += 'e'
+    msg += 'e'
     res.send('test')
   })
 
@@ -182,34 +200,106 @@ test('felid.use() should run middlewares in order as they defined', () => {
     .get('/test')
     .end((err, res) => {
       expect(err).toBe(null)
-      expect(order).toBe('abcde')
+      expect(msg).toBe('abcde')
     })
 })
 
 test('felid.use() should run middlewares in order as they defined', () => {
   const instance = new Felid()
-  let order = ''
+  let msg = ''
   instance.use(
     (req, res, next) => {
-      order += 'a'
+      msg += 'a'
       next()
-      order += 'c'
+      msg += 'c'
     },
     (req, res) => {
-      order += 'b'
+      msg += 'b'
     }
   )
   instance.get('/test', (req, res) => {
-    order += 'd'
+    msg += 'd'
     res.send('test')
   })
 
   injectar(instance.lookup())
     .get('/test')
     .end((err, res) => {
-      expect(order).toBe('abcd')
+      expect(msg).toBe('abcd')
       expect(err).toBe(null)
     })
+})
+
+test('felid.use() should skip middlewares after return false', () => {
+  const instance = new Felid()
+  instance.use((req, res) => {
+    res.send('hack')
+    return false
+  })
+  instance.get('/test', (req, res) => {
+    res.send('test')
+  })
+
+  injectar(instance.lookup())
+    .get('/test')
+    .end((err, res) => {
+      expect(err).toBe(null)
+      expect(res.payload).toBe('hack')
+    })
+})
+
+// route handler
+test('route handler should fire correctly', () => {
+  const instance = new Felid()
+  let msg = ''
+  instance.preRequest((req, res) => {
+    msg += 'a'
+    expect(msg).toBe('a')
+  })
+  instance.postResponse((req, res) => {
+    msg += 'c'
+    expect(msg).toBe('abc')
+  })
+  instance.get('/test', (req, res) => {
+    msg += 'b'
+    res.send(msg)
+  })
+
+  injectar(instance.lookup())
+    .get('/test')
+    .end((err, res) => {
+      expect(err).toBe(null)
+      expect(res.payload).toBe('ab')
+    })
+})
+
+test('route handler should skip middlewares after return false', () => {
+  const instance = new Felid()
+  let msg = ''
+  instance.postResponse((req, res) => {
+    msg += 'b'
+    expect(msg).toBe('ab')
+  })
+  instance.get('/test', (req, res) => {
+    msg = 'a'
+    res.send('test')
+  })
+  instance.get('/skip', (req, res) => {
+    msg = 'c'
+    res.send('test')
+    return false
+  })
+
+  const inject = injectar(instance.lookup())
+  inject.get('/test')
+    .end((err, res) => {
+      expect(err).toBe(null)
+    })
+
+  inject.get('/skip')
+    .end((err, res) => {
+      expect(err).toBe(null)
+    })    
 })
 
 // postResponse()
