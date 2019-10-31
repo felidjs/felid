@@ -8,9 +8,10 @@ test('felid instance should be an object', () => {
 })
 
 // listen()
-test('felid.listen() should listen on the given port', () => {
+test('felid.listen() should start the server on the given port', () => {
   const instance = new Felid()
   instance.listen(3000, () => {
+    expect(instance.listening).toBe(true)
     expect(instance.address.port).toBe(3000)
   })
 })
