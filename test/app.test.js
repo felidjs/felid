@@ -13,6 +13,7 @@ test('felid.listen() should start the server on the given port', () => {
   instance.listen(3000, () => {
     expect(instance.listening).toBe(true)
     expect(instance.address.port).toBe(3000)
+    instance.close()
   })
 })
 

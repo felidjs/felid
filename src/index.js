@@ -122,6 +122,11 @@ class Felid {
     assert.strictEqual(typeof fn, 'function', 'Error handler must be a function')
     this[kErrorHandler] = fn.bind(this)
   }
+
+  // others
+  close () {
+    this[kServer].close()
+  }
 }
 
 const supportedHttpMethods = [
