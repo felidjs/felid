@@ -53,25 +53,11 @@ function defaultTextParser (req) {
   })
 }
 
-function defaultJsonParser (req) {
-  function parseBody (body) {
-    try {
-      body = JSON.parse(body)
-    } catch (e) {
-      return e
-    }
-    return body
+async function defaultJsonParser (req) {
+  const raw = await defaultTextParser(req)
+  try {
+    return JSON.parse(raw)
+  } catch (e) {
+    return e
   }
-  return new Promise((resolve, reject) => {
-    let body = ''
-    req.on('data', chunk => {
-      body += chunk
-    })
-    req.on('end', () => {
-      resolve(parseBody(body))
-    })
-    req.on('error', err => {
-      reject(err)
-    })
-  })
 }

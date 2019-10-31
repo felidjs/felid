@@ -2,18 +2,35 @@ const injectar = require('injectar')
 const Felid = require('../src')
 
 // body
+test('request.body should parse the request body if content-type is text/plain', () => {
+  const instance = new Felid()
+  const msg = 'a plain text'
+  instance.post('/test', (req, res) => {
+    expect(req.body).toStrictEqual(msg)
+    res.send()
+  })
+
+  injectar(instance.lookup())
+    .post('/test')
+    .headers({ 'content-type': 'text/plain' })
+    .body(msg)
+    .end((err, res) => {
+      expect(err).toBe(null)
+    })
+})
+
 test('request.body should parse the request body if content-type is application/json', () => {
   const instance = new Felid()
-  const jsonMsg = { json: 'data' }
+  const msg = { json: 'data' }
   instance.post('/test', (req, res) => {
-    expect(req.body).toStrictEqual(jsonMsg)
+    expect(req.body).toStrictEqual(msg)
     res.send()
   })
 
   injectar(instance.lookup())
     .post('/test')
     .headers({ 'content-type': 'application/json' })
-    .body(jsonMsg)
+    .body(msg)
     .end((err, res) => {
       expect(err).toBe(null)
     })
