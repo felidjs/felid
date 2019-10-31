@@ -39,6 +39,8 @@ class Felid {
     this[kResponse] = Response.init()
     this[kRouter] = router(this[kOption].routeOptions)
     this[kServer] = null
+
+    this[kRequest].parsers = this[kParsers]
   }
 
   get address () {
@@ -94,11 +96,9 @@ class Felid {
   // listen
   listen (...args) {
     this[kServer] = server(this.lookup(), ...args)
-    startup(this)
   }
 
   lookup () {
-    startup(this)
     return (req, res) => this[kRouter].lookup(req, res)
   }
 
@@ -180,9 +180,4 @@ function handleError (err, req, res) {
     return
   }
   res.code(500).send(err.message || res.code())
-}
-
-function startup (ctx) {
-  ctx[kParsers].prepare()
-  ctx[kRequest].parsers = ctx[kParsers]
 }
