@@ -4,6 +4,7 @@ const http = require('http')
 const router = require('./router')
 const server = require('./server')
 const Hook = require('./hook')
+const Parser = require('./parser')
 const Request = require('./request')
 const Response = require('./response')
 
@@ -17,6 +18,7 @@ const {
   kOption,
   kErrorHandler,
   kHooks,
+  kParsers,
   kRequest,
   kResponse,
   kRouter,
@@ -32,6 +34,7 @@ class Felid {
 
     this[kErrorHandler] = handleError.bind(this)
     this[kHooks] = new Hook()
+    this[kParsers] = new Parser()
     this[kRequest] = Request.init()
     this[kResponse] = Response.init()
     this[kRouter] = router(this[kOption].routeOptions)
@@ -91,9 +94,11 @@ class Felid {
   // listen
   listen (...args) {
     this[kServer] = server(this.lookup(), ...args)
+    startup(this)
   }
 
   lookup () {
+    startup(this)
     return (req, res) => this[kRouter].lookup(req, res)
   }
 
@@ -175,4 +180,9 @@ function handleError (err, req, res) {
     return
   }
   res.code(500).send(err.message || res.code())
+}
+
+function startup (ctx) {
+  ctx[kParsers].prepare()
+  ctx[kRequest].parsers = ctx[kParsers]
 }

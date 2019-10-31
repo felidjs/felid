@@ -20,6 +20,9 @@ class Parser {
 
   get (type) {
     assert.strictEqual(typeof type, 'string', `Type of content-type '${type}' should be a string`)
+    if (!type) {
+      return defaultTextParser
+    }
     if (!this.parserKeys) {
       this.parserKeys = this.parsers.keys()
     }

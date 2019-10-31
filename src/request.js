@@ -38,34 +38,15 @@ async function build (proto, req, params) {
   if (noBodyMethods.indexOf(req.method) >= 0) {
     return request
   }
-  request.body = await buildBody(req)
+  request.body = await buildBody(request)
   return request
 }
 
-function buildBody (req) {
-  return new Promise((resolve, reject) => {
-    let body = ''
-    req.on('data', chunk => {
-      body += chunk
-    })
-    req.on('end', () => {
-      resolve(parseBody(req, body))
-    })
-    req.on('error', err => {
-      reject(err)
-    })
-  })
-}
-
-function parseBody (req, body) {
-  if (req.headers['content-type'] && req.headers['content-type'].indexOf('application/json') > -1) {
-    try {
-      body = JSON.parse(body)
-    } catch (e) {
-      return e
-    }
-  }
-  return body
+function buildBody (request) {
+  const req = request.req
+  const contentType = req.headers['content-type'] || ''
+  const parser = request.parsers.get(contentType)
+  return parser(req)
 }
 
 module.exports = {
