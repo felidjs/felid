@@ -30,14 +30,16 @@ class Felid {
       ...options
     }
 
-    this.address = null
-    this[kServer] = null
-
     this[kErrorHandler] = handleError.bind(this)
     this[kHooks] = new Hook()
     this[kRequest] = Request.init()
     this[kResponse] = Response.init()
     this[kRouter] = router(this[kOption].routeOptions)
+    this[kServer] = null
+  }
+
+  get address () {
+    return this[kServer] ? this[kServer].address() : null
   }
 
   get listening () {
@@ -89,7 +91,6 @@ class Felid {
   // listen
   listen (...args) {
     this[kServer] = server(this.lookup(), ...args)
-    this.address = this[kServer].address()
   }
 
   lookup () {
