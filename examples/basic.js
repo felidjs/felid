@@ -7,5 +7,5 @@ app.get('/', (req, res) => {
 })
 
 app.listen(8080, () => {
-  console.log(`felid server listen on ${app.port}`)
+  console.log(`felid server listen on ${app.address.port}`)
 })
