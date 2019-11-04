@@ -28,6 +28,7 @@ const {
 class Felid {
   constructor (options = {}) {
     this[kOption] = {
+      https: null,
       routeOptions: {},
       ...options
     }
@@ -38,7 +39,7 @@ class Felid {
     this[kRequest] = Request.init()
     this[kResponse] = Response.init()
     this[kRouter] = router(this[kOption].routeOptions)
-    this[kServer] = null
+    this[kServer] = server(this[kOption], this.lookup())
 
     this[kRequest].parsers = this[kParsers]
   }
@@ -95,7 +96,7 @@ class Felid {
 
   // listen
   listen (...args) {
-    this[kServer] = server(this.lookup(), ...args)
+    this[kServer].listen(...args)
   }
 
   lookup () {

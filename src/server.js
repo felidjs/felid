@@ -1,8 +1,13 @@
 const http = require('http')
+const https = require('https')
 
-function server (handler, ...args) {
-  const server = http.createServer(handler)
-  server.listen(...args)
+function server (options, handler) {
+  let server = null
+  if (options.https) {
+    server = https.createServer(options.https, handler)
+  } else {
+    server = http.createServer(handler)
+  }
   return server
 }
 

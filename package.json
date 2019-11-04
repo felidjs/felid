@@ -31,7 +31,8 @@
     "jest": "^24.9.0",
     "pre-commit": "^1.2.2",
     "snazzy": "^8.0.0",
-    "standard": "^14.0.0"
+    "standard": "^14.0.0",
+    "superagent": "^5.1.0"
   },
   "dependencies": {
     "find-my-way": "^2.1.0"
