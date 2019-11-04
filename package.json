@@ -1,17 +1,17 @@
 {
   "name": "felid",
-  "version": "0.0.2",
-  "description": "",
+  "version": "0.0.3",
+  "description": "A Node.js web framework",
   "main": "src/index.js",
   "scripts": {
     "benchmark": "concurrently -k -s first \"node ./examples/basic.js\" \"autocannon -c 100 -d 5 -p 10 localhost:8080\"",
     "lint": "standard --fix src/*.js | snazzy",
-    "unit": "jest",
-    "test": "npm run lint && npm run unit"
+    "test": "npm run lint && npm run unit",
+    "unit": "jest"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fralonra/felid.git"
+    "url": "git+https://github.com/felidjs/felid.git"
   },
   "keywords": [
     "web",
@@ -21,9 +21,9 @@
   "author": "zoron (https://github.com/fralonra/)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/fralonra/felid/issues"
+    "url": "https://github.com/felidjs/felid/issues"
   },
-  "homepage": "https://github.com/fralonra/felid#readme",
+  "homepage": "https://github.com/felidjs/felid#readme",
   "devDependencies": {
     "autocannon": "^4.0.0",
     "concurrently": "^4.1.2",
