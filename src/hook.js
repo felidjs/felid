@@ -90,8 +90,12 @@ function concatHooks (hookMap, routeHookMap, name, url) {
 
 function runHooks (hooks, ...args) {
   let index = 0
-  async function next () {
-    if (typeof hooks[index] === 'function') {
+  let keepRunning = true
+  async function next (keep = true) {
+    if (keep === false) {
+      keepRunning = keep
+    }
+    if (keepRunning && typeof hooks[index] === 'function') {
       const res = await hooks[index++](...args, next)
       if (res === false) {
         return Promise.resolve(res)

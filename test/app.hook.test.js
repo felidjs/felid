@@ -193,14 +193,14 @@ test('felid.use() should run middlewares in order as they defined', () => {
   })
   instance.get('/test', (req, res) => {
     msg += 'e'
-    res.send('test')
+    res.send(msg)
   })
 
   injectar(instance.lookup())
     .get('/test')
     .end((err, res) => {
       expect(err).toBe(null)
-      expect(msg).toBe('abcde')
+      expect(res.payload).toBe('abcde')
     })
 })
 
@@ -219,14 +219,53 @@ test('felid.use() should run middlewares in order as they defined', () => {
   )
   instance.get('/test', (req, res) => {
     msg += 'd'
-    res.send('test')
+    res.send(msg)
   })
 
   injectar(instance.lookup())
     .get('/test')
     .end((err, res) => {
-      expect(msg).toBe('abcd')
       expect(err).toBe(null)
+      expect(res.payload).toBe('abcd')
+    })
+})
+
+test('felid.use() should skip middlewares in the same hook after invoking next(false)', () => {
+  const instance = new Felid()
+  instance.decorateRequest('msg', '')
+  instance.use(
+    (req, res, next) => {
+      req.msg += 'a'
+      if (req.url === '/return') {
+        return next(false)
+      } else {
+        next(false)
+      }
+      req.msg += 'b'
+    },
+    (req, res) => {
+      req.msg += 'c'
+    }
+  )
+  instance.get('/return', (req, res) => {
+    req.msg += 'd'
+    res.send(req.msg)
+  })
+  instance.get('/no-return', (req, res) => {
+    req.msg += 'd'
+    res.send(req.msg)
+  })
+
+  const inject = injectar(instance.lookup())
+  inject.get('/return')
+    .end((err, res) => {
+      expect(err).toBe(null)
+      expect(res.payload).toBe('ad')
+    })
+  inject.get('/no-return')
+    .end((err, res) => {
+      expect(err).toBe(null)
+      expect(res.payload).toBe('abd')
     })
 })
 
