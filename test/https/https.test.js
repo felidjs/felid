@@ -17,7 +17,7 @@ test('felid should set up a https server', () => {
     res.send('test')
   })
 
-  instance.listen(8088, () => {
+  instance.listen(0, () => {
     superagent
       .get(`https://localhost:${instance.address.port}/test`)
       .key(key)
