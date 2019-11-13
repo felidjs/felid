@@ -3,8 +3,10 @@ const path = require('path')
 const Felid = require('../src')
 
 const app = new Felid({
-  key: fs.readFileSync(path.resolve(__dirname, '../test/https/felid.key')),
-  cert: fs.readFileSync(path.resolve(__dirname, '../test/https/felid.cert'))
+  https: {
+    key: fs.readFileSync(path.resolve(__dirname, '../test/https/felid.key')),
+    cert: fs.readFileSync(path.resolve(__dirname, '../test/https/felid.cert'))
+  }
 })
 
 app.get('/', (req, res) => {
