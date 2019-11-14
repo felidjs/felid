@@ -79,6 +79,21 @@ test('response.header() should return the given header value', () => {
     })
 })
 
+test('response.header() should return the response header', () => {
+  const instance = new Felid()
+  instance.get('/test', (req, res) => {
+    res.header('foo', 'bar')
+    expect(res.header().foo).toBe('bar')
+    res.send()
+  })
+
+  injectar(instance.lookup())
+    .get('/test')
+    .end((err, res) => {
+      expect(err).toBe(null)
+    })
+})
+
 // redirect()
 test('response.redirect() should redirect correctly', () => {
   const instance = new Felid()

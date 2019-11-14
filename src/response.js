@@ -14,12 +14,15 @@ const Response = {
   },
 
   header (key, value) {
+    if (key === undefined && value === undefined) {
+      return this.res.getHeaders()
+    }
     if (typeof key === 'string' && value === undefined) {
       return this.res.getHeader(key)
     }
     if (key && typeof key === 'object') {
       for (const k in key) {
-        this.header(k, key[k])
+        this.res.setHeader(k, key[k])
       }
       return this
     }
