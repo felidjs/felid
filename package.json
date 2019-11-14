@@ -35,6 +35,7 @@
     "superagent": "^5.1.0"
   },
   "dependencies": {
+    "delegates": "^1.0.0",
     "find-my-way": "^2.1.0"
   }
 }
