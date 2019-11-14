@@ -1,4 +1,5 @@
 const assert = require('assert')
+const delegate = require('delegates')
 
 const Response = {
   code (code) {
@@ -7,10 +8,6 @@ const Response = {
     }
     this.res.statusCode = code
     return this
-  },
-
-  get finished () {
-    return this.res.finished
   },
 
   header (key, value) {
@@ -28,10 +25,6 @@ const Response = {
     }
     this.res.setHeader(key, value)
     return this
-  },
-
-  get headers () {
-    return this.res.headers
   },
 
   redirect (code, url) {
@@ -71,6 +64,9 @@ const Response = {
     }
   }
 }
+
+delegate(Response, 'res')
+  .getter('finished')
 
 function build (proto, request, res) {
   const response = Object.create(proto)

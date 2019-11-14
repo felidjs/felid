@@ -1,4 +1,5 @@
 const querystring = require('querystring')
+const delegate = require('delegates')
 
 const noBodyMethods = [
   'get',
@@ -10,20 +11,13 @@ const noBodyMethods = [
 const Request = {
   header (key) {
     return this.req.headers[key]
-  },
-
-  get headers () {
-    return this.req.headers
-  },
-
-  get method () {
-    return this.req.method
-  },
-
-  get url () {
-    return this.req.url
   }
 }
+
+delegate(Request, 'req')
+  .getter('headers')
+  .getter('method')
+  .getter('url')
 
 async function build (proto, req, params) {
   const request = Object.create(proto)

@@ -1,6 +1,22 @@
 const injectar = require('injectar')
 const Felid = require('../src')
 
+// finished
+test('response.finished should indicate whether the response has completed', () => {
+  const instance = new Felid()
+  instance.get('/test', (req, res) => {
+    expect(res.finished).toBe(false)
+    res.send()
+    expect(res.finished).toBe(true)
+  })
+
+  injectar(instance.lookup())
+    .get('/test')
+    .end((err, res) => {
+      expect(err).toBe(null)
+    })
+})
+
 // code()
 test('response.code() should set correct status code', () => {
   const instance = new Felid()
