@@ -36,6 +36,23 @@ test('request.body should parse the request body if content-type is application/
     })
 })
 
+// headers
+test('request.headers should return the request headers', () => {
+  const instance = new Felid()
+  instance.get('/test', (req, res) => {
+    expect(typeof req.headers).toBe('object')
+    expect(req.headers.foo).toBe('bar')
+    res.send()
+  })
+
+  injectar(instance.lookup())
+    .get('/test')
+    .headers({ foo: 'bar' })
+    .end((err, res) => {
+      expect(err).toBe(null)
+    })
+})
+
 // method
 test('request.method should indicate the request method', () => {
   const instance = new Felid()
