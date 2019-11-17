@@ -2,10 +2,10 @@ const querystring = require('querystring')
 const delegate = require('delegates')
 
 const noBodyMethods = [
-  'get',
-  'options',
-  'head',
-  'trace'
+  'GET',
+  'OPTIONS',
+  'HEAD',
+  'TRACE'
 ]
 
 const Request = {
