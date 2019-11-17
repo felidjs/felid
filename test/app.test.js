@@ -8,18 +8,19 @@ test('felid instance should be an object', () => {
 })
 
 describe('listen()', () => {
-  test('felid.listen() should start the server on the given port', () => {
+  test('felid.listen() should start the server on the given port', (done) => {
     const instance = new Felid()
     instance.listen(3000, () => {
       expect(instance.listening).toBe(true)
       expect(instance.address.port).toBe(3000)
       instance.close()
+      done()
     })
   })
 })
 
 describe('addParser()', () => {
-  test('felid.addParser should apply parser to body of given content-type', () => {
+  test('felid.addParser should apply parser to body of given content-type', async () => {
     const instance = new Felid()
     instance.addParser('test/type', (req) => {
       return 'test'
@@ -28,25 +29,22 @@ describe('addParser()', () => {
       res.send(req.body)
     })
   
-    injectar(instance.lookup())
+    let res
+    res = await injectar(instance.lookup())
       .post('/test')
       .headers({ 'content-type': 'test/type' })
       .body('body')
-      .end((err, res) => {
-        expect(err).toBe(null)
-        expect(res.payload).toBe('test')
-      })
+      .end()
+    expect(res.payload).toBe('test')
   
-    injectar(instance.lookup())
+    res = await injectar(instance.lookup())
       .post('/test')
       .body('body')
-      .end((err, res) => {
-        expect(err).toBe(null)
-        expect(res.payload).toBe('body')
-      })
+      .end()
+    expect(res.payload).toBe('body')
   })
   
-  test('felid.addParser should apply parser to body of given list of content-type', () => {
+  test('felid.addParser should apply parser to body of given list of content-type', async () => {
     const instance = new Felid()
     instance.addParser(['test/type', 'test/type-a'], (req) => {
       return 'test'
@@ -55,34 +53,29 @@ describe('addParser()', () => {
       res.send(req.body)
     })
   
-    injectar(instance.lookup())
+    let res
+    res = await injectar(instance.lookup())
       .post('/test')
       .headers({ 'content-type': 'test/type' })
       .body('body')
-      .end((err, res) => {
-        expect(err).toBe(null)
-        expect(res.payload).toBe('test')
-      })
+      .end()
+    expect(res.payload).toBe('test')
   
-    injectar(instance.lookup())
+    res = await injectar(instance.lookup())
       .post('/test')
       .headers({ 'content-type': 'test/type-a' })
       .body('body')
-      .end((err, res) => {
-        expect(err).toBe(null)
-        expect(res.payload).toBe('test')
-      })
+      .end()
+    expect(res.payload).toBe('test')
   
-    injectar(instance.lookup())
+    res = await injectar(instance.lookup())
       .post('/test')
       .body('body')
-      .end((err, res) => {
-        expect(err).toBe(null)
-        expect(res.payload).toBe('body')
-      })
+      .end()
+    expect(res.payload).toBe('body')
   })
   
-  test('felid.addParser should override the default parser of given content-type', () => {
+  test('felid.addParser should override the default parser of given content-type', (done) => {
     const instance = new Felid()
     instance.addParser('text/plain', (req) => {
       return 'test'
@@ -98,10 +91,11 @@ describe('addParser()', () => {
       .end((err, res) => {
         expect(err).toBe(null)
         expect(res.payload).toBe('test')
+        done()
       })
   })
   
-  test('felid.addParser should override the default parser', () => {
+  test('felid.addParser should override the default parser', (done) => {
     const instance = new Felid()
     instance.addParser((req) => {
       return 'test'
@@ -116,6 +110,7 @@ describe('addParser()', () => {
       .end((err, res) => {
         expect(err).toBe(null)
         expect(res.payload).toBe('test')
+        done()
       })
   })
   
@@ -128,7 +123,7 @@ describe('addParser()', () => {
 })
 
 describe('error handle', () => {
-  test('handle error thrown by felid.preRequest()', () => {
+  test('handle error thrown by felid.preRequest()', (done) => {
     const instance = new Felid()
     instance.preRequest((req, res) => {
       throw new Error('Boom!')
@@ -143,10 +138,11 @@ describe('error handle', () => {
         expect(err).toBe(null)
         expect(res.statusCode).toBe(500)
         expect(res.payload).toBe('Boom!')
+        done()
       })
   })
 
-  test('handle error thrown by felid.use()', () => {
+  test('handle error thrown by felid.use()', (done) => {
     const instance = new Felid()
     instance.use((req, res) => {
       throw new Error('Boom!')
@@ -161,6 +157,32 @@ describe('error handle', () => {
         expect(err).toBe(null)
         expect(res.statusCode).toBe(500)
         expect(res.payload).toBe('Boom!')
+        done()
+      })
+  })
+})
+
+describe('onError()', () => {
+  test('felid.onError should set error handler', (done) => {
+    const instance = new Felid()
+    instance.onError((err, req, res) => {
+      res.statusCode = 600
+      res.end('custom error')
+    })
+    instance.preRequest((req, res) => {
+      throw new Error('Boom!')
+    })
+    instance.get('/test', (req, res) => {
+      res.send('test')
+    })
+  
+    injectar(instance.lookup())
+      .get('/test')
+      .end((err, res) => {
+        expect(err).toBe(null)
+        expect(res.statusCode).toBe(600)
+        expect(res.payload).toBe('custom error')
+        done()
       })
   })
 })

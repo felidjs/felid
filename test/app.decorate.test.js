@@ -1,3 +1,4 @@
+const injectar = require('injectar')
 const Felid = require('../src')
 
 describe('decorate()', () => {
@@ -31,7 +32,7 @@ describe('decorate()', () => {
 })
 
 describe('decorateRequest()', () => {
-  test('felid.decorateRequest() should add new property to the Request object', () => {
+  test('felid.decorateRequest() should add new property to the Request object', (done) => {
     const instance = new Felid()
     instance.decorateRequest('key', 'value')
     instance.decorateRequest('key2', 'value2')
@@ -39,7 +40,16 @@ describe('decorateRequest()', () => {
     instance.get('/test', (req, res) => {
       expect(req.key).toBe('value')
       expect(req.key2).toBe('value2')
+      res.send('test')
     })
+  
+    injectar(instance.lookup())
+      .get('test')
+      .end((err, res) => {
+        expect(err).toBe(null)
+        expect(res.payload).toBe('test')
+        done()
+      })
   })
   
   test('felid.decorateRequest() should throw if there is undefined argument', () => {
@@ -63,7 +73,7 @@ describe('decorateRequest()', () => {
 })
 
 describe('decorateResponse()', () => {
-  test('felid.decorateResponse() should add new property to the Response object', () => {
+  test('felid.decorateResponse() should add new property to the Response object', (done) => {
     const instance = new Felid()
     instance.decorateResponse('key', 'value')
     instance.decorateResponse('key2', 'value2')
@@ -71,7 +81,16 @@ describe('decorateResponse()', () => {
     instance.get('/test', (req, res) => {
       expect(res.key).toBe('value')
       expect(res.key2).toBe('value2')
+      res.send('test')
     })
+
+    injectar(instance.lookup())
+      .get('test')
+      .end((err, res) => {
+        expect(err).toBe(null)
+        expect(res.payload).toBe('test')
+        done()
+      })
   })
   
   test('felid.decorateResponse() should throw if there is undefined argument', () => {

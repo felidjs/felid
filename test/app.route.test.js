@@ -2,7 +2,7 @@ const injectar = require('injectar')
 const Felid = require('../src')
 
 describe('on()', () => {
-  test('felid.on() should send response properly', () => {
+  test('felid.on() should send response properly', (done) => {
     const instance = new Felid()
     instance.on('get', '/test', (req, res) => {
       res.send('test')
@@ -14,6 +14,7 @@ describe('on()', () => {
         expect(err).toBe(null)
         expect(res.statusCode).toBe(200)
         expect(res.body).toBe('test')
+        done()
       })
   })
 })
@@ -29,41 +30,35 @@ const supportedHttpMethods = [
 ]
 
 describe('all()', () => {
-  test('felid.all() should add handler to all http methods', () => {
+  test('felid.all() should add handler to all http methods', async () => {
     const instance = new Felid()
     instance.all('/test', (req, res) => {
-      res.header('method', req.method).send()
+      res.send(req.method)
     })
   
     const inject = injectar(instance.lookup())
-    supportedHttpMethods.forEach(method => {
-      inject[method]('/test')
-        .end((err, res) => {
-          expect(err).toBe(null)
-          expect(res.statusCode).toBe(200)
-          expect(res.headers.method).toBe(method.toUpperCase())
-        })
+    supportedHttpMethods.forEach(async method => {
+      let res = await inject[method]('/test').end()
+      expect(res.statusCode).toBe(200)
+      expect(res.payload).toBe(method.toUpperCase())
     })
   })
 })
 
 describe('http methods', () => {
-  test('felid uses correct http method', () => {
+  test('felid uses correct http method', async () => {
     const instance = new Felid()
     supportedHttpMethods.forEach(method => {
       instance[method]('/test', (req, res) => {
-        res.header('method', req.method).send()
+        res.send(req.method)
       })
     })
     
     const inject = injectar(instance.lookup())
-    supportedHttpMethods.forEach(method => {
-      inject[method]('/test')
-        .end((err, res) => {
-          expect(err).toBe(null)
-          expect(res.statusCode).toBe(200)
-          expect(res.headers.method).toBe(method.toUpperCase())
-        })
+    supportedHttpMethods.forEach(async method => {
+      let res = await inject[method]('/test').end()
+      expect(res.statusCode).toBe(200)
+      expect(res.payload).toBe(method.toUpperCase())
     })
   })
 })

@@ -2,24 +2,26 @@ const injectar = require('injectar')
 const Felid = require('../src')
 
 describe('finished', () => {
-  test('response.finished should indicate whether the response has completed', () => {
+  test('response.finished should indicate whether the response has completed', (done) => {
     const instance = new Felid()
     instance.get('/test', (req, res) => {
       expect(res.finished).toBe(false)
-      res.send()
+      res.send('test')
       expect(res.finished).toBe(true)
+      done()
     })
   
     injectar(instance.lookup())
       .get('/test')
       .end((err, res) => {
         expect(err).toBe(null)
+        expect(res.payload).toBe('test')
       })
   })
 })
 
 describe('code()', () => {
-  test('response.code() should set correct status code', () => {
+  test('response.code() should set correct status code', (done) => {
     const instance = new Felid()
     instance.get('/test', (req, res) => {
       res.code(600).send()
@@ -30,27 +32,30 @@ describe('code()', () => {
       .end((err, res) => {
         expect(err).toBe(null)
         expect(res.statusCode).toBe(600)
+        done()
       })
   })
   
-  test('response.code() should return the correct status code', () => {
+  test('response.code() should return the correct status code', (done) => {
     const instance = new Felid()
     instance.get('/test', (req, res) => {
       res.code(600)
       expect(res.code()).toBe(600)
-      res.send()
+      res.send('test')
     })
   
     injectar(instance.lookup())
       .get('/test')
       .end((err, res) => {
         expect(err).toBe(null)
+        expect(res.payload).toBe('test')
+        done()
       })
   })
 })
 
 describe('header()', () => {
-  test('response.header() should set the given header correctly', () => {
+  test('response.header() should set the given header correctly', (done) => {
     const instance = new Felid()
     instance.get('/test', (req, res) => {
       res.header('foo', 'bar').send()
@@ -61,10 +66,11 @@ describe('header()', () => {
       .end((err, res) => {
         expect(err).toBe(null)
         expect(res.headers.foo).toBe('bar')
+        done()
       })
   })
   
-  test('response.header() should set the given headers correctly', () => {
+  test('response.header() should set the given headers correctly', (done) => {
     const instance = new Felid()
     instance.get('/test', (req, res) => {
       res.header({
@@ -79,42 +85,47 @@ describe('header()', () => {
         expect(err).toBe(null)
         expect(res.headers.foo).toBe('bar')
         expect(res.headers.bar).toBe('foo')
+        done()
       })
   })
   
-  test('response.header() should return the given header value', () => {
+  test('response.header() should return the given header value', (done) => {
     const instance = new Felid()
     instance.get('/test', (req, res) => {
       res.header('foo', 'bar')
       expect(res.header('foo')).toBe('bar')
-      res.send()
+      res.send('test')
     })
   
     injectar(instance.lookup())
       .get('/test')
       .end((err, res) => {
         expect(err).toBe(null)
+        expect(res.payload).toBe('test')
+        done()
       })
   })
   
-  test('response.header() should return the response header', () => {
+  test('response.header() should return the response header', (done) => {
     const instance = new Felid()
     instance.get('/test', (req, res) => {
       res.header('foo', 'bar')
       expect(res.header().foo).toBe('bar')
-      res.send()
+      res.send('test')
     })
   
     injectar(instance.lookup())
       .get('/test')
       .end((err, res) => {
         expect(err).toBe(null)
+        expect(res.payload).toBe('test')
+        done()
       })
   })
 })
 
 describe('redirect()', () => {
-  test('response.redirect() should redirect correctly', () => {
+  test('response.redirect() should redirect correctly', async () => {
     const instance = new Felid()
     
     instance.get('/test', (req, res) => {
@@ -128,26 +139,19 @@ describe('redirect()', () => {
     })
   
     const inject = injectar(instance.lookup())
-    inject
-      .get('/test')
-      .end((err, res) => {
-        expect(err).toBe(null)
-        expect(res.statusCode).toBe(302)
-        expect(res.headers.location).toBe('/dest')
-      })
+    let res
+    res = await inject.get('/test').end()
+    expect(res.statusCode).toBe(302)
+    expect(res.headers.location).toBe('/dest')
     
-    inject
-      .get('/code-600')
-      .end((err, res) => {
-        expect(err).toBe(null)
-        expect(res.statusCode).toBe(600)
-        expect(res.headers.location).toBe('/dest')
-      })
+    res = await inject.get('/code-600').end()
+    expect(res.statusCode).toBe(600)
+    expect(res.headers.location).toBe('/dest')
   })
 })
 
 describe('send()', () => {
-  test('response.send() should set content-type correctly', () => {
+  test('response.send() should set content-type correctly', async () => {
     const instance = new Felid()
     const stringMsg = 'string'
     const bufferMsg = 'a buffer'
@@ -164,32 +168,21 @@ describe('send()', () => {
     })
   
     const inject = injectar(instance.lookup())
-    inject
-      .get('/type-string')
-      .end((err, res) => {
-        expect(err).toBe(null)
-        expect(res.headers['content-type']).toBe('text/plain; charset=utf-8')
-        expect(res.payload).toBe(stringMsg)
-      })
+    let res
+    res = await inject.get('/type-string').end()
+    expect(res.headers['content-type']).toBe('text/plain; charset=utf-8')
+    expect(res.payload).toBe(stringMsg)
+
+    res = await inject.get('/type-buffer').end()
+    expect(res.headers['content-type']).toBe('application/octet-stream')
+    expect(res.payload).toBe(bufferMsg)
   
-    inject
-      .get('/type-buffer')
-      .end((err, res) => {
-        expect(err).toBe(null)
-        expect(res.headers['content-type']).toBe('application/octet-stream')
-        expect(res.payload).toBe(bufferMsg)
-      })
-  
-    inject
-      .get('/type-json')
-      .end((err, res) => {
-        expect(err).toBe(null)
-        expect(res.headers['content-type']).toBe('application/json; charset=utf-8')
-        expect(res.json()).toStrictEqual(jsonMsg)
-      })
+    res = await inject.get('/type-json').end()
+    expect(res.headers['content-type']).toBe('application/json; charset=utf-8')
+    expect(res.json()).toStrictEqual(jsonMsg)
   })
   
-  test('response.send() should throw if called multiple times', () => {
+  test('response.send() should throw if called multiple times', (done) => {
     const instance = new Felid()
     instance.get('/test', (req, res) => {
       res.send('a')
@@ -203,6 +196,7 @@ describe('send()', () => {
       .end((err, res) => {
         expect(err).toBe(null)
         expect(res.payload).toBe('a')
+        done()
       })
   })
 })

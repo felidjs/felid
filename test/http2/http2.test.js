@@ -3,7 +3,7 @@ const path = require('path')
 const superagent = require('superagent')
 const Felid = require('../../src')
 
-test('felid should set up a http2 server', () => {
+test('felid should set up a http2 server', (done) => {
   const instance = new Felid({
     http2: true
   })
@@ -21,11 +21,12 @@ test('felid should set up a http2 server', () => {
         expect(res.statusCode).toBe(200)
         expect(res.text).toBe('test')
         instance.close()
+        done()
       })
   })
 })
 
-test('felid should set up an encrypted http2 server', () => {
+test('felid should set up an encrypted http2 server', (done) => {
   const key = fs.readFileSync(path.resolve(__dirname, '../https/felid.key'))
   const cert = fs.readFileSync(path.resolve(__dirname, '../https/felid.cert'))
   const instance = new Felid({
@@ -50,6 +51,7 @@ test('felid should set up an encrypted http2 server', () => {
         expect(res.statusCode).toBe(200)
         expect(res.text).toBe('test')
         instance.close()
+        done()
       })
   })
 })

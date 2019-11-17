@@ -3,7 +3,7 @@ const path = require('path')
 const superagent = require('superagent')
 const Felid = require('../../src')
 
-test('felid should set up a https server', () => {
+test('felid should set up a https server', (done) => {
   const key = fs.readFileSync(path.resolve(__dirname, 'felid.key'))
   const cert = fs.readFileSync(path.resolve(__dirname, 'felid.cert'))
   const instance = new Felid({
@@ -27,6 +27,7 @@ test('felid should set up a https server', () => {
         expect(res.statusCode).toBe(200)
         expect(res.text).toBe('test')
         instance.close()
+        done()
       })
   })
 })
