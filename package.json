@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "benchmark": "concurrently -k -s first \"node ./examples/basic.js\" \"autocannon -c 100 -d 5 -p 10 localhost:8080\"",
-    "lint": "standard --fix src/*.js | snazzy",
+    "lint": "standard --fix src/**/*.js test/**/*.js | snazzy",
     "test": "npm run lint && npm run unit",
     "unit": "jest"
   },
@@ -37,5 +37,10 @@
   "dependencies": {
     "delegates": "^1.0.0",
     "find-my-way": "^2.1.0"
+  },
+  "standard": {
+    "env": [
+      "jest"
+    ]
   }
 }
