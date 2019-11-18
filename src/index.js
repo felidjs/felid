@@ -28,6 +28,7 @@ const {
 class Felid {
   constructor (options = {}) {
     this[kOption] = {
+      http2: null,
       https: null,
       routeOptions: {},
       ...options
