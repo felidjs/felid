@@ -54,6 +54,44 @@ describe('code()', () => {
   })
 })
 
+describe('getHeader()', () => {
+  test('response.getHeader() should return the given header value', (done) => {
+    const instance = new Felid()
+    instance.get('/test', (req, res) => {
+      res.header('foo', 'bar')
+      expect(res.getHeader('foo')).toBe('bar')
+      res.send('test')
+    })
+  
+    injectar(instance.lookup())
+      .get('/test')
+      .end((err, res) => {
+        expect(err).toBe(null)
+        expect(res.payload).toBe('test')
+        done()
+      })
+  })
+})
+
+describe('getHeaders()', () => {
+  test('response.getHeaders() should return the response header', (done) => {
+    const instance = new Felid()
+    instance.get('/test', (req, res) => {
+      res.header('foo', 'bar')
+      expect(res.getHeaders().foo).toBe('bar')
+      res.send('test')
+    })
+  
+    injectar(instance.lookup())
+      .get('/test')
+      .end((err, res) => {
+        expect(err).toBe(null)
+        expect(res.payload).toBe('test')
+        done()
+      })
+  })
+})
+
 describe('header()', () => {
   test('response.header() should set the given header correctly', (done) => {
     const instance = new Felid()
@@ -198,5 +236,73 @@ describe('send()', () => {
         expect(res.payload).toBe('a')
         done()
       })
+  })
+})
+
+describe('setHeader()', () => {
+  test('response.setHeader() should set the given header correctly', (done) => {
+    const instance = new Felid()
+    instance.get('/test', (req, res) => {
+      res.setHeader('foo', 'bar').send()
+    })
+  
+    injectar(instance.lookup())
+      .get('/test')
+      .end((err, res) => {
+        expect(err).toBe(null)
+        expect(res.headers.foo).toBe('bar')
+        done()
+      })
+  })
+
+  test('response.setHeader() should throw if key is undefined', (done) => {
+    const instance = new Felid()
+    instance.get('/test', (req, res) => {
+      expect(() => {
+        res.setHeader()
+      }).toThrow()
+      done()
+    })
+  
+    injectar(instance.lookup()).get('/test').end()
+  })
+})
+
+describe('setHeaders()', () => {
+  test('response.setHeaders() should set the given headers correctly', (done) => {
+    const instance = new Felid()
+    instance.get('/test', (req, res) => {
+      res.setHeaders({
+        foo: 'bar',
+        bar: 'foo'
+      }).send('test')
+    })
+  
+    injectar(instance.lookup())
+      .get('/test')
+      .end((err, res) => {
+        expect(err).toBe(null)
+        expect(res.headers.foo).toBe('bar')
+        expect(res.headers.bar).toBe('foo')
+        done()
+      })
+  })
+
+  test('response.setHeader() should throw if headers is not an object', (done) => {
+    const instance = new Felid()
+    instance.get('/test', (req, res) => {
+      expect(() => {
+        res.setHeaders()
+      }).toThrow()
+      expect(() => {
+        res.setHeaders('headers')
+      }).toThrow()
+      expect(() => {
+        res.setHeaders(null)
+      }).toThrow()
+      done()
+    })
+  
+    injectar(instance.lookup()).get('/test').end()
   })
 })

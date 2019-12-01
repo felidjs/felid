@@ -10,21 +10,25 @@ const Response = {
     return this
   },
 
+  getHeader (key) {
+    return this.res.getHeader(key)
+  },
+
+  getHeaders () {
+    return this.res.getHeaders()
+  },
+
   header (key, value) {
     if (key === undefined && value === undefined) {
-      return this.res.getHeaders()
+      return this.getHeaders()
     }
     if (typeof key === 'string' && value === undefined) {
-      return this.res.getHeader(key)
+      return this.getHeader(key)
     }
     if (key && typeof key === 'object') {
-      for (const k in key) {
-        this.res.setHeader(k, key[k])
-      }
-      return this
+      return this.setHeaders(key)
     }
-    this.res.setHeader(key, value)
-    return this
+    return this.setHeader(key, value)
   },
 
   redirect (code, url) {
@@ -62,6 +66,21 @@ const Response = {
     } catch (e) {
       onSend(this, payload)
     }
+  },
+
+  setHeader (key, value) {
+    assert.notStrictEqual(key, undefined, 'The key for a header should not be undefined')
+    this.res.setHeader(key, value)
+    return this
+  },
+
+  setHeaders (headers) {
+    assert.ok(headers, 'A valid object of headers should be provided')
+    assert.strictEqual(typeof headers, 'object', 'A valid object of headers should be provided')
+    for (const key in headers) {
+      this.setHeader(key, headers[key])
+    }
+    return this
   }
 }
 
