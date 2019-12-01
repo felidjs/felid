@@ -250,6 +250,21 @@ describe('setHeader()', () => {
       })
   })
 
+  test('response.setHeader() should set multiple headers with the same name', (done) => {
+    const instance = new Felid()
+    instance.get('/test', (req, res) => {
+      res.setHeader('foo', ['bar', 'baz']).send()
+    })
+  
+    injectar(instance.lookup())
+      .get('/test')
+      .end((err, res) => {
+        expect(err).toBe(null)
+        expect(res.headers.foo).toStrictEqual(['bar', 'baz'])
+        done()
+      })
+  })
+
   test('response.setHeader() should throw if key is undefined', (done) => {
     const instance = new Felid()
     instance.get('/test', (req, res) => {
