@@ -42,7 +42,7 @@ const Response = {
   },
 
   send (payload) {
-    if (this.finished) return
+    assert.strictEqual(this.finished, false, 'The response has already been sent')
     if (typeof payload === 'string') {
       if (!this.res.hasHeader('content-type')) {
         this.res.setHeader('content-type', 'text/plain; charset=utf-8')
@@ -70,6 +70,7 @@ const Response = {
 
   setHeader (key, value) {
     assert.notStrictEqual(key, undefined, 'The key for a header should not be undefined')
+
     this.res.setHeader(key, value)
     return this
   },
@@ -95,7 +96,6 @@ function build (proto, request, res) {
 }
 
 function onSend (response, payload) {
-  assert.strictEqual(response.finished, false, 'The response has already been sent')
   response.res.end(payload)
 }
 

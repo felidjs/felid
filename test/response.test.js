@@ -227,15 +227,10 @@ describe('send()', () => {
       expect(() => {
         res.send('b')
       }).toThrow()
+      done()
     })
   
-    injectar(instance.lookup())
-      .get('/test')
-      .end((err, res) => {
-        expect(err).toBe(null)
-        expect(res.payload).toBe('a')
-        done()
-      })
+    injectar(instance.lookup()).get('/test').end()
   })
 })
 
