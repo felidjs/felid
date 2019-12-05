@@ -57,20 +57,21 @@ const Response = {
       onSend(this, payload)
       return
     }
+    let jsonPayload
     try {
-      const jsonPayload = JSON.stringify(payload)
-      if (!this.res.hasHeader('content-type')) {
-        this.res.setHeader('content-type', 'application/json; charset=utf-8')
-      }
-      onSend(this, jsonPayload)
+      jsonPayload = JSON.stringify(payload)
     } catch (e) {
       onSend(this, payload)
+      return
     }
+    if (!this.res.hasHeader('content-type')) {
+      this.res.setHeader('content-type', 'application/json; charset=utf-8')
+    }
+    onSend(this, jsonPayload)
   },
 
   setHeader (key, value) {
     assert.notStrictEqual(key, undefined, 'The key for a header should not be undefined')
-
     this.res.setHeader(key, value)
     return this
   },

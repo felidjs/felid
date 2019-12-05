@@ -161,8 +161,8 @@ function buildHandler (ctx, url, handler) {
       request = await Request.build(ctx[kRequest], req, params)
       response = Response.build(ctx[kResponse], request, res)
     }
-    let next
-    try {
+    async function handle () {
+      let next
       next = await ctx[kHooks].run(HOOK_PRE_REQUEST, url, req, res)
       if (next === false) return
       await buildObjs(req, res, params)
@@ -171,6 +171,9 @@ function buildHandler (ctx, url, handler) {
       next = await handler(request, response)
       if (next === false) return
       await ctx[kHooks].run(HOOK_POST_RESPONSE, url, request, response)
+    }
+    try {
+      await handle()
     } catch (e) {
       ctx[kErrorHandler](e, request || req, response || res)
     }
