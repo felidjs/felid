@@ -79,20 +79,20 @@ class Felid {
   }
 
   // hook
-  hook (hookName, url, ...handlers) {
-    this[kHooks].add(hookName, url, ...handlers)
+  hook (hookName, ...handlers) {
+    this[kHooks].add(hookName, ...handlers)
   }
 
-  preRequest (url, ...handlers) {
-    this.hook(HOOK_PRE_REQUEST, url, ...handlers)
+  preRequest (...handlers) {
+    this[kHooks].add(HOOK_PRE_REQUEST, ...handlers)
   }
 
-  use (url, ...handlers) {
-    this.hook(HOOK_MIDDLE, url, ...handlers)
+  use (...handlers) {
+    this[kHooks].add(HOOK_MIDDLE, ...handlers)
   }
 
-  postResponse (url, ...handlers) {
-    this.hook(HOOK_POST_RESPONSE, url, ...handlers)
+  postResponse (...handlers) {
+    this[kHooks].add(HOOK_POST_RESPONSE, ...handlers)
   }
 
   // listen
@@ -163,14 +163,14 @@ function buildHandler (ctx, url, handler) {
     }
     async function handle () {
       let next
-      next = await ctx[kHooks].run(HOOK_PRE_REQUEST, url, req, res)
+      next = await ctx[kHooks].run(HOOK_PRE_REQUEST, req, res)
       if (next === false) return
       await buildObjs(req, res, params)
-      next = await ctx[kHooks].run(HOOK_MIDDLE, url, request, response)
+      next = await ctx[kHooks].run(HOOK_MIDDLE, request, response)
       if (next === false) return
       next = await handler(request, response)
       if (next === false) return
-      await ctx[kHooks].run(HOOK_POST_RESPONSE, url, request, response)
+      await ctx[kHooks].run(HOOK_POST_RESPONSE, request, response)
     }
     try {
       await handle()
