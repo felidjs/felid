@@ -17,6 +17,14 @@ describe('listen()', () => {
       done()
     })
   })
+
+  test('felid.listen() without a callback', () => {
+    const instance = new Felid()
+    instance.listen(3000)
+    expect(instance.listening).toBe(true)
+    expect(instance.address.port).toBe(3000)
+    instance.close()
+  })
 })
 
 describe('addParser()', () => {
