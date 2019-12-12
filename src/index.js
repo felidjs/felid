@@ -14,6 +14,16 @@ const {
   HOOK_POST_RESPONSE
 } = require('./constants')
 
+const supportedHttpMethods = [
+  'delete',
+  'get',
+  'head',
+  'options',
+  'patch',
+  'post',
+  'put'
+]
+
 const {
   kOption,
   kErrorHandler,
@@ -106,11 +116,11 @@ class Felid {
 
   // route
   on (method, url, handler, store) {
-    return this[kRouter].on(method.toUpperCase(), url, buildHandler(this, url, handler), store)
+    this[kRouter].on(method.toUpperCase(), url, buildHandler(this, handler), store)
   }
 
   all (url, handler, store) {
-    return this[kRouter].all(url, buildHandler(this, url, handler), store)
+    this[kRouter].on(supportedHttpMethods.map(m => m.toUpperCase()), url, buildHandler(this, handler), store)
   }
 
   // plugin
@@ -136,25 +146,15 @@ class Felid {
   }
 }
 
-const supportedHttpMethods = [
-  'delete',
-  'get',
-  'head',
-  'options',
-  'patch',
-  'post',
-  'put'
-]
-
 supportedHttpMethods.forEach(method => {
   Felid.prototype[method] = function (url, handler, store) {
-    return this[kRouter][method](url, buildHandler(this, url, handler), store)
+    return this[kRouter][method](url, buildHandler(this, handler), store)
   }
 })
 
 module.exports = Felid
 
-function buildHandler (ctx, url, handler) {
+function buildHandler (ctx, handler) {
   return async function (req, res, params) {
     let request, response
     async function buildObjs (req, res, params) {
