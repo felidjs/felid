@@ -37,6 +37,7 @@
     "superagent": "^5.1.0"
   },
   "dependencies": {
+    "abstract-logging": "^2.0.0",
     "delegates": "^1.0.0",
     "find-my-way": "^2.1.0"
   },

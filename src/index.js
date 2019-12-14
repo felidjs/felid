@@ -40,9 +40,13 @@ class Felid {
     this[kOption] = {
       http2: null,
       https: null,
+      logger: false,
       routeOptions: {},
       ...options
     }
+    this.logger = this[kOption].logger
+      ? this[kOption].logger
+      : require('abstract-logging')
 
     this[kErrorHandler] = handleError.bind(this)
     this[kHooks] = new Hook()
