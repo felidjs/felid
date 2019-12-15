@@ -1,6 +1,6 @@
 {
   "name": "felid",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A Node.js web framework",
   "main": "src/index.js",
   "scripts": {
