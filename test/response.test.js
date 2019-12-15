@@ -188,6 +188,41 @@ describe('redirect()', () => {
   })
 })
 
+describe('removeHeader()', () => {
+  test('response.removeHeader() should remove the given header', async () => {
+    const instance = new Felid()
+    instance.use((req, res) => {
+      res.setHeader('foo', 'bar')
+    })
+    instance.get('/test', (req, res) => {
+      res.removeHeader('foo').send()
+    })
+    instance.get('/test1', (req, res) => {
+      res.send()
+    })
+  
+    const inject = injectar(instance.lookup())
+    let res
+    res = await inject.get('/test').end()
+    expect(res.headers).not.toHaveProperty('foo')
+    
+    res = await inject.get('/test1').end()
+    expect(res.headers.foo).toBe('bar')
+  })
+
+  test('response.removeHeader() should throw if key is undefined', (done) => {
+    const instance = new Felid()
+    instance.get('/test', (req, res) => {
+      expect(() => {
+        res.removeHeader()
+      }).toThrow()
+      done()
+    })
+  
+    injectar(instance.lookup()).get('/test').end()
+  })
+})
+
 describe('send()', () => {
   test('response.send() should set content-type correctly', async () => {
     const instance = new Felid()

@@ -41,6 +41,12 @@ const Response = {
     this.send()
   },
 
+  removeHeader (key) {
+    assert.notStrictEqual(key, undefined, 'The key for a header should not be undefined')
+    this.res.removeHeader(key)
+    return this
+  },
+
   send (payload) {
     assert.strictEqual(this.finished, false, 'The response has already been sent')
     if (typeof payload === 'string') {
