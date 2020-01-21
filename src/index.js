@@ -2,11 +2,12 @@ const assert = require('assert')
 const http = require('http')
 
 const router = require('./router')
-const server = require('./server')
 const Hook = require('./hook')
 const Parser = require('./parser')
 const Request = require('./request')
 const Response = require('./response')
+
+const Core = require('./core')
 
 const {
   HOOK_PRE_REQUEST,
@@ -24,72 +25,19 @@ const supportedHttpMethods = [
   'put'
 ]
 
+const symbols = require('./symbols')
 const {
-  kOption,
   kErrorHandler,
   kHooks,
   kParsers,
   kRequest,
   kResponse,
-  kRouter,
-  kServer
-} = require('./symbols')
+  kRouter
+} = symbols
 
-class Felid {
-  constructor (options = {}) {
-    this[kOption] = {
-      http2: null,
-      https: null,
-      logger: false,
-      routeOptions: {},
-      ...options
-    }
-    this.logger = this[kOption].logger
-      ? this[kOption].logger
-      : require('abstract-logging')
-
-    this[kErrorHandler] = handleError.bind(this)
-    this[kHooks] = new Hook()
-    this[kParsers] = new Parser()
-    this[kRequest] = Request.init()
-    this[kResponse] = Response.init()
-    this[kRouter] = router(this[kOption].routeOptions)
-    this[kServer] = server(this[kOption], this.lookup())
-
-    this[kRequest].parsers = this[kParsers]
-  }
-
-  get address () {
-    return this[kServer] ? this[kServer].address() : null
-  }
-
-  get listening () {
-    return this[kServer] ? this[kServer].listening : false
-  }
-
-  // decorate
-  decorate (key, value) {
-    buildDecorator(this, key, value)
-  }
-
-  decorateRequest (key, value) {
-    buildDecorator(this[kRequest], key, value)
-  }
-
-  decorateResponse (key, value) {
-    buildDecorator(this[kResponse], key, value)
-  }
-
-  hasDecorator (key) {
-    return checkDecoratorExists(this, key)
-  }
-
-  hasRequestDecorator (key) {
-    return checkDecoratorExists(this[kRequest], key)
-  }
-
-  hasResponseDecorator (key) {
-    return checkDecoratorExists(this[kResponse], key)
+class Felid extends Core {
+  lookup () {
+    return (req, res) => this[kRouter].lookup(req, res)
   }
 
   // hook
@@ -109,15 +57,6 @@ class Felid {
     this[kHooks].add(HOOK_POST_RESPONSE, ...handlers)
   }
 
-  // listen
-  listen (...args) {
-    this[kServer].listen(...args)
-  }
-
-  lookup () {
-    return (req, res) => this[kRouter].lookup(req, res)
-  }
-
   // route
   on (method, url, handler, store) {
     this[kRouter].on(method.toUpperCase(), url, buildHandler(this, handler), store)
@@ -125,12 +64,6 @@ class Felid {
 
   all (url, handler, store) {
     this[kRouter].on(supportedHttpMethods.map(m => m.toUpperCase()), url, buildHandler(this, handler), store)
-  }
-
-  // plugin
-  plugin (fn, option) {
-    assert.strictEqual(typeof fn, 'function', 'Handler for plugin must be a function')
-    fn(this, option)
   }
 
   // bosy parser
@@ -144,19 +77,41 @@ class Felid {
     this[kErrorHandler] = fn.bind(this)
   }
 
-  // others
-  close () {
-    this[kServer].close()
+  _init (options = {}) {
+    this._initServer(options, this.lookup())
+    this._initFelid(options)
+    this._initDecorators(this[kRequest], 'decorateRequest', 'hasRequestDecorator')
+    this._initDecorators(this[kResponse], 'decorateResponse', 'hasResponseDecorator')
+  }
+
+  _initFelid (options) {
+    this.logger = options.logger
+      ? options.logger
+      : require('abstract-logging')
+
+    this[kErrorHandler] = handleError.bind(this)
+    this[kHooks] = new Hook()
+    this[kParsers] = new Parser()
+    this[kRequest] = Request.init()
+    this[kResponse] = Response.init()
+    this[kRouter] = router(options.routeOptions)
+    supportedHttpMethods.forEach(method => {
+      Object.defineProperty(this, method, {
+        value (url, handler, store) {
+          return this[kRouter][method](url, buildHandler(this, handler), store)
+        },
+        writable: false,
+        configurable: false,
+        enumerable: false
+      })
+    })
+
+    this[kRequest].parsers = this[kParsers]
   }
 }
 
-supportedHttpMethods.forEach(method => {
-  Felid.prototype[method] = function (url, handler, store) {
-    return this[kRouter][method](url, buildHandler(this, handler), store)
-  }
-})
-
 module.exports = Felid
+module.exports.symbols = symbols
 
 function buildHandler (ctx, handler) {
   return async function (req, res, params) {
@@ -182,18 +137,6 @@ function buildHandler (ctx, handler) {
       ctx[kErrorHandler](e, request || req, response || res)
     }
   }
-}
-
-function buildDecorator (instance, key, value) {
-  assert.notStrictEqual(key, undefined, 'The key for a decorator should not be undefined')
-  assert.notStrictEqual(value, undefined, 'The value for a decorator should not be undefined')
-  assert.ok(!(key in instance), `The property named "${key}" already exists`)
-  instance[key] = value
-}
-
-function checkDecoratorExists (instance, key) {
-  assert.notStrictEqual(key, undefined, 'The decorator name should not be undefined')
-  return key in instance
 }
 
 function handleError (err, req, res) {
