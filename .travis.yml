@@ -3,6 +3,7 @@ node_js:
    - 'stable'
    - 'lts/*'
 cache:
+  yarn: true
   directories:
     - "node_modules"
 after_success: npm run coverage
