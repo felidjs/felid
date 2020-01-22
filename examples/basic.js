@@ -1,4 +1,4 @@
-const Felid = require('../src')
+const Felid = require('packages/felid/src')
 
 const app = new Felid()
 
