@@ -1,0 +1,22 @@
+{
+  "name": "@felid/server",
+  "version": "0.0.1",
+  "description": "Server module for Felid",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/felidjs/felid.git"
+  },
+  "keywords": [
+    "felid"
+  ],
+  "author": "zoron (https://github.com/fralonra/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/felidjs/felid/issues"
+  },
+  "homepage": "https://github.com/felidjs/felid#readme",
+  "publishConfig": {
+    "access": "public"
+  }
+}

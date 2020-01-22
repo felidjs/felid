@@ -1,0 +1,29 @@
+{
+  "name": "felid",
+  "version": "0.0.6",
+  "description": "A Node.js web framework",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/felidjs/felid.git"
+  },
+  "keywords": [
+    "web",
+    "framework",
+    "api",
+    "felid"
+  ],
+  "author": "zoron (https://github.com/fralonra/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/felidjs/felid/issues"
+  },
+  "homepage": "https://github.com/felidjs/felid#readme",
+  "dependencies": {
+    "@felid/core": "^0.0.2",
+    "@felid/symbols": "^0.0.1",
+    "abstract-logging": "^2.0.0",
+    "delegates": "^1.0.0",
+    "find-my-way": "^2.1.0"
+  }
+}
