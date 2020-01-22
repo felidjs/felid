@@ -30,6 +30,5 @@
     "env": [
       "jest"
     ]
-  },
-  "name": "felid"
+  }
 }
