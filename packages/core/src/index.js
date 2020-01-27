@@ -17,6 +17,10 @@ class FelidCore {
     return this[kServer] ? this[kServer].listening : false
   }
 
+  get server () {
+    return this[kServer]
+  }
+
   // decorate
   decorate (key, value) {
     buildDecorator(this, key, value)
