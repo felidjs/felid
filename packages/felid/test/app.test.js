@@ -170,12 +170,13 @@ describe('error handle', () => {
   })
 })
 
-describe('onError()', () => {
-  test('felid.onError should set error handler', (done) => {
-    const instance = new Felid()
-    instance.onError((err, req, res) => {
-      res.statusCode = 600
-      res.end('custom error ' + err)
+describe('options', () => {
+  test('options.errorHandler should set error handler', (done) => {
+    const instance = new Felid({
+      errorHandler (err, req, res) {
+        res.statusCode = 600
+        res.end('custom error ' + err)
+      }
     })
     instance.preRequest((req, res) => {
       throw new Error('Boom!')

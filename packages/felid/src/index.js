@@ -1,4 +1,3 @@
-const assert = require('assert')
 const http = require('http')
 
 const Core = require('@felid/core')
@@ -69,12 +68,6 @@ class Felid extends Core {
     this[kParsers].add(type, parser)
   }
 
-  // error handle
-  onError (fn) {
-    assert.strictEqual(typeof fn, 'function', 'Error handler must be a function')
-    this[kErrorHandler] = fn.bind(this)
-  }
-
   _init (options = {}) {
     this._initServer(options, this.lookup())
     this._initFelid(options)
@@ -87,7 +80,9 @@ class Felid extends Core {
       ? options.logger
       : require('abstract-logging')
 
-    this[kErrorHandler] = handleError.bind(this)
+    this[kErrorHandler] = typeof options.errorHandler === 'function'
+      ? options.errorHandler.bind(this)
+      : handleError.bind(this)
     this[kHooks] = new Hook()
     this[kParsers] = new Parser()
     this[kRequest] = Request.init()
