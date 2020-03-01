@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const Felid = require('packages/felid/src')
+const Felid = require('../packages/felid/src')
 
 const app = new Felid({
   https: {
