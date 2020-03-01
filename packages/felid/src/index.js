@@ -1,3 +1,4 @@
+const assert = require('assert')
 const http = require('http')
 
 const Core = require('@felid/core')
@@ -7,7 +8,8 @@ const {
   kParsers,
   kRequest,
   kResponse,
-  kRouter
+  kRouter,
+  kRoutePrefix
 } = require('@felid/symbols')
 
 const router = require('./router')
@@ -56,11 +58,11 @@ class Felid extends Core {
 
   // route
   on (method, url, handler, store) {
-    this[kRouter].on(method.toUpperCase(), url, buildHandler(this, handler), store)
+    buildRoute(this, { method, url, handler, store })
   }
 
   all (url, handler, store) {
-    this[kRouter].on(supportedHttpMethods.map(m => m.toUpperCase()), url, buildHandler(this, handler), store)
+    buildRoute(this, { method: supportedHttpMethods, url, handler, store })
   }
 
   // bosy parser
@@ -68,14 +70,14 @@ class Felid extends Core {
     this[kParsers].add(type, parser)
   }
 
-  _init (options = {}) {
+  _init (options) {
     this._initServer(options, this.lookup())
     this._initFelid(options)
     this._initDecorators(this[kRequest], 'decorateRequest', 'hasRequestDecorator')
     this._initDecorators(this[kResponse], 'decorateResponse', 'hasResponseDecorator')
   }
 
-  _initFelid (options) {
+  _initFelid (options = {}) {
     this.logger = options.logger
       ? options.logger
       : require('abstract-logging')
@@ -86,20 +88,20 @@ class Felid extends Core {
     this[kHooks] = new Hook()
     this[kParsers] = new Parser()
     this[kRequest] = Request.init()
+    this[kRequest].parsers = this[kParsers]
     this[kResponse] = Response.init()
     this[kRouter] = router(options.routeOptions)
+    this[kRoutePrefix] = normalizeRoutePrefix(options.routePrefix)
     supportedHttpMethods.forEach(method => {
       Object.defineProperty(this, method, {
         value (url, handler, store) {
-          return this[kRouter][method](url, buildHandler(this, handler), store)
+          buildRoute(this, { method, url, handler, store })
         },
         writable: false,
         configurable: false,
         enumerable: false
       })
     })
-
-    this[kRequest].parsers = this[kParsers]
   }
 }
 
@@ -131,6 +133,19 @@ function buildHandler (ctx, handler) {
   }
 }
 
+function buildMethodParam (method) {
+  return method.toUpperCase()
+}
+
+function buildRoute (ctx, options) {
+  let { method, url, handler, store } = options
+  method = Array.isArray(method)
+    ? method.map(buildMethodParam)
+    : buildMethodParam(method)
+  url = ctx[kRoutePrefix] + url
+  ctx[kRouter].on(method, url, buildHandler(ctx, handler), store)
+}
+
 function handleError (err, req, res) {
   if (res instanceof http.ServerResponse) {
     res.statusCode = 500
@@ -138,4 +153,12 @@ function handleError (err, req, res) {
     return
   }
   res.code(500).send(err.message || res.code())
+}
+
+function normalizeRoutePrefix (prefix) {
+  if (!prefix) return ''
+  assert.strictEqual(typeof prefix, 'string', `options.routePrefix should be a string`)
+  return prefix.startsWith('/') || prefix.startsWith('*')
+    ? prefix
+    : '/' + prefix
 }

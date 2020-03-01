@@ -194,4 +194,21 @@ describe('options', () => {
         done()
       })
   })
+
+  test('options.routePrefix should set route prefix correctly', (done) => {
+    const instance = new Felid({
+      routePrefix: 'prefix'
+    })
+    instance.get('/test', (req, res) => {
+      res.send('test')
+    })
+
+    injectar(instance.lookup())
+      .get('/prefix/test')
+      .end((err, res) => {
+        expect(err).toBe(null)
+        expect(res.payload).toBe('test')
+        done()
+      })
+  })
 })

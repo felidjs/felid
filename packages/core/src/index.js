@@ -5,7 +5,7 @@ const {
 } = require('@felid/symbols')
 
 class FelidCore {
-  constructor (options = {}) {
+  constructor (options) {
     this._init(options)
   }
 
@@ -52,7 +52,7 @@ class FelidCore {
     })
   }
 
-  _initServer (options, handler) {
+  _initServer (options = {}, handler) {
     const opt = {
       http2: options.http2 || null,
       https: options.https || null
