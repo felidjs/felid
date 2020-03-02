@@ -157,7 +157,7 @@ function handleError (err, req, res) {
 
 function normalizeRoutePrefix (prefix) {
   if (!prefix) return ''
-  assert.strictEqual(typeof prefix, 'string', `options.routePrefix should be a string`)
+  assert.strictEqual(typeof prefix, 'string', 'options.routePrefix should be a string')
   return prefix.startsWith('/') || prefix.startsWith('*')
     ? prefix
     : '/' + prefix

@@ -37,7 +37,7 @@ class FelidCore {
 
   // plugin
   plugin (fn, option) {
-    assert.strictEqual(typeof fn, 'function', 'Handler for plugin must be a function')
+    assert.strictEqual(typeof fn, 'function', 'Handler for plugin should be a function')
     fn(this, option)
   }
 
