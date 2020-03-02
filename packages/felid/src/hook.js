@@ -1,4 +1,5 @@
 const assert = require('assert')
+
 const {
   HOOK_PRE_REQUEST,
   HOOK_MIDDLE,
