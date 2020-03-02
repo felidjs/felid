@@ -8,8 +8,7 @@ const {
   kParsers,
   kRequest,
   kResponse,
-  kRouter,
-  kRoutePrefix
+  kRouter
 } = require('@felid/symbols')
 
 const router = require('./router')
@@ -81,6 +80,7 @@ class Felid extends Core {
     this.logger = options.logger
       ? options.logger
       : require('abstract-logging')
+    this.routePrefix = normalizeRoutePrefix(options.routePrefix)
 
     this[kErrorHandler] = typeof options.errorHandler === 'function'
       ? options.errorHandler.bind(this)
@@ -91,7 +91,6 @@ class Felid extends Core {
     this[kRequest].parsers = this[kParsers]
     this[kResponse] = Response.init()
     this[kRouter] = router(options.routeOptions)
-    this[kRoutePrefix] = normalizeRoutePrefix(options.routePrefix)
     supportedHttpMethods.forEach(method => {
       Object.defineProperty(this, method, {
         value (url, handler, store) {
@@ -142,7 +141,7 @@ function buildRoute (ctx, options) {
   method = Array.isArray(method)
     ? method.map(buildMethodParam)
     : buildMethodParam(method)
-  url = ctx[kRoutePrefix] + url
+  url = ctx.routePrefix + url
   ctx[kRouter].on(method, url, buildHandler(ctx, handler), store)
 }
 
