@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.3](https://github.com/felidjs/felid/compare/v0.1.0-alpha.2...v0.1.0-alpha.3) (2020-03-02)
+
+
+### Features
+
+* **felid:** remove felid[kRoutePrefix]. use felid.routePrefix instead ([aa0b0c5](https://github.com/felidjs/felid/commit/aa0b0c5a47f6c24a060cdd5274c80cdbde2f522c))
+* **symbols:** remove symbol: kRoutePrefix ([66d36ea](https://github.com/felidjs/felid/commit/66d36eaea9c43f8f7a999a808636bb471260d6b2))
+
+
+
+
+
 # [0.1.0-alpha.2](https://github.com/felidjs/felid/compare/v0.1.0-alpha.1...v0.1.0-alpha.2) (2020-03-01)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@felid/symbols",
-  "version": "0.1.0-alpha.2",
+  "version": "0.1.0-alpha.3",
   "description": "Symbols used in Felid",
   "main": "src/index.js",
   "repository": {
