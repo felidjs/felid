@@ -11,11 +11,11 @@ const {
   kRouter
 } = require('@felid/symbols')
 
-const router = require('./router')
 const Hook = require('./hook')
 const Parser = require('./parser')
 const Request = require('./request')
 const Response = require('./response')
+const Router = require('./router')
 
 const {
   HOOK_PRE_REQUEST,
@@ -57,11 +57,11 @@ class Felid extends Core {
 
   // route
   on (method, url, handler, store) {
-    buildRoute(this, { method, url, handler, store })
+    Router.buildRoute(this, { method, url, handler, store })
   }
 
   all (url, handler, store) {
-    buildRoute(this, { method: supportedHttpMethods, url, handler, store })
+    Router.buildRoute(this, { method: supportedHttpMethods, url, handler, store })
   }
 
   // bosy parser
@@ -90,11 +90,11 @@ class Felid extends Core {
     this[kRequest] = Request.init()
     this[kRequest].parsers = this[kParsers]
     this[kResponse] = Response.init()
-    this[kRouter] = router(options.routeOptions)
+    this[kRouter] = Router.init(options.routeOptions)
     supportedHttpMethods.forEach(method => {
       Object.defineProperty(this, method, {
         value (url, handler, store) {
-          buildRoute(this, { method, url, handler, store })
+          Router.buildRoute(this, { method, url, handler, store })
         },
         writable: false,
         configurable: false,
@@ -105,45 +105,6 @@ class Felid extends Core {
 }
 
 module.exports = Felid
-
-function buildHandler (ctx, handler) {
-  return async function (req, res, params) {
-    let request, response
-    async function buildObjs (req, res, params) {
-      request = await Request.build(ctx[kRequest], req, params)
-      response = Response.build(ctx[kResponse], request, res)
-    }
-    async function handle () {
-      let next
-      next = await ctx[kHooks].run(HOOK_PRE_REQUEST, req, res)
-      if (next === false) return
-      await buildObjs(req, res, params)
-      next = await ctx[kHooks].run(HOOK_MIDDLE, request, response)
-      if (next === false) return
-      next = await handler(request, response)
-      if (next === false) return
-      await ctx[kHooks].run(HOOK_POST_RESPONSE, request, response)
-    }
-    try {
-      await handle()
-    } catch (e) {
-      ctx[kErrorHandler](e, request || req, response || res)
-    }
-  }
-}
-
-function buildMethodParam (method) {
-  return method.toUpperCase()
-}
-
-function buildRoute (ctx, options) {
-  let { method, url, handler, store } = options
-  method = Array.isArray(method)
-    ? method.map(buildMethodParam)
-    : buildMethodParam(method)
-  url = ctx.routePrefix + url
-  ctx[kRouter].on(method, url, buildHandler(ctx, handler), store)
-}
 
 function handleError (err, req, res) {
   if (res instanceof http.ServerResponse) {
