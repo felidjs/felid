@@ -15,10 +15,10 @@
     "autocannon": "^4.0.0",
     "codecov": "^3.6.1",
     "concurrently": "^4.1.2",
+    "husky": "^4.2.5",
     "injectar": "^1.4.0",
     "jest": "^24.9.0",
     "lerna": "^3.20.2",
-    "pre-commit": "^1.2.2",
     "snazzy": "^8.0.0",
     "standard": "^14.0.0",
     "superagent": "^5.1.0"
@@ -31,5 +31,10 @@
     "env": [
       "jest"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run test"
+    }
   }
 }
