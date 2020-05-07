@@ -53,10 +53,7 @@ function runHooks (hooks, ...args) {
       keepRunning = keep
     }
     if (keepRunning && typeof hooks[index] === 'function') {
-      const res = await hooks[index++](...args, next)
-      if (res === false) {
-        return Promise.resolve(res)
-      }
+      if (await hooks[index++](...args, next) === false) return Promise.resolve(false)
       return next()
     }
     return Promise.resolve()

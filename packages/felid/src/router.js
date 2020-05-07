@@ -29,14 +29,10 @@ function buildHandler (ctx, handler) {
       response = Response.build(ctx[kResponse], request, res)
     }
     async function handle () {
-      let next
-      next = await ctx[kHooks].run(HOOK_PRE_REQUEST, req, res)
-      if (next === false) return
+      if (await ctx[kHooks].run(HOOK_PRE_REQUEST, req, res) === false) return
       await buildObjs(req, res, params)
-      next = await ctx[kHooks].run(HOOK_MIDDLE, request, response)
-      if (next === false) return
-      next = await handler(request, response)
-      if (next === false) return
+      if (await ctx[kHooks].run(HOOK_MIDDLE, request, response) === false) return
+      if (await handler(request, response) === false) return
       await ctx[kHooks].run(HOOK_POST_RESPONSE, request, response)
     }
     try {
