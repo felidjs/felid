@@ -83,8 +83,8 @@ class Felid extends Core {
     this.routePrefix = normalizeRoutePrefix(options.routePrefix)
 
     this[kErrorHandler] = typeof options.errorHandler === 'function'
-      ? options.errorHandler.bind(this)
-      : handleError.bind(this)
+      ? options.errorHandler
+      : handleError
     this[kHooks] = new Hook()
     this[kParsers] = new Parser()
     this[kRequest] = Request.init()
