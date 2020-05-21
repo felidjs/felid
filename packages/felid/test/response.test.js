@@ -170,7 +170,7 @@ describe('redirect()', () => {
       res.redirect('/dest')
     })
     instance.get('/code-600', (req, res) => {
-      res.redirect(600, '/dest')
+      res.redirect('/dest', 600)
     })
     instance.get('/dest', (req, res) => {
       res.send('dest')

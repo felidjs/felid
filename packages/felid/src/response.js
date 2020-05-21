@@ -31,13 +31,9 @@ const Response = {
     return this.setHeader(key, value)
   },
 
-  redirect (code, url) {
-    if (typeof code === 'string') {
-      url = code
-      code = 302
-    }
+  redirect (url, code) {
     this.res.setHeader('location', url)
-    this.res.statusCode = code
+    this.res.statusCode = code || 302
     this.send()
   },
 
