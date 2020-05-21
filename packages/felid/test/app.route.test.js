@@ -17,6 +17,22 @@ describe('on()', () => {
         done()
       })
   })
+
+  test('felid.on() should pass down route stores properly', (done) => {
+    const instance = new Felid()
+    instance.on('get', '/test', (req, res, store) => {
+      res.send(store.foo)
+    }, { foo: 'bar' })
+
+    injectar(instance.lookup())
+      .get('/test')
+      .end((err, res) => {
+        expect(err).toBe(null)
+        expect(res.statusCode).toBe(200)
+        expect(res.body).toBe('bar')
+        done()
+      })
+  })
 })
 
 const supportedHttpMethods = [

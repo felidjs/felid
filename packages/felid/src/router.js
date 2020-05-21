@@ -22,7 +22,7 @@ function init (options) {
 }
 
 function buildHandler (ctx, handler) {
-  return async function (req, res, params) {
+  return async function (req, res, params, store) {
     let request, response
     async function buildObjs (req, res, params) {
       request = await Request.build(ctx[kRequest], req, params)
@@ -32,7 +32,7 @@ function buildHandler (ctx, handler) {
       if (await ctx[kHooks].run(HOOK_PRE_REQUEST, req, res) === false) return
       await buildObjs(req, res, params)
       if (await ctx[kHooks].run(HOOK_MIDDLE, request, response) === false) return
-      if (await handler(request, response) === false) return
+      if (await handler(request, response, store) === false) return
       await ctx[kHooks].run(HOOK_POST_RESPONSE, request, response)
     }
     try {
