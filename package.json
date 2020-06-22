@@ -4,7 +4,7 @@
     "packages/*"
   ],
   "scripts": {
-    "benchmark": "concurrently -k -s first \"node ./examples/basic.js\" \"autocannon -c 100 -d 5 -p 10 localhost:8080\"",
+    "benchmark": "npx concurrently -k -s first \"node ./examples/basic.js\" \"npx autocannon -c 100 -d 5 -p 10 localhost:8080\"",
     "coverage": "codecov",
     "lint": "standard --fix 'packages/**/*.js' | snazzy",
     "postinstall": "lerna bootstrap",
