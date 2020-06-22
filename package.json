@@ -25,6 +25,9 @@
     "standard": "^14.0.0",
     "superagent": "^5.1.0"
   },
+  "engines": {
+    "node": ">= 10.0"
+  },
   "jest": {
     "coverageDirectory": "./coverage/",
     "collectCoverage": true
