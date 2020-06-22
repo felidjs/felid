@@ -14,9 +14,7 @@
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
-    "autocannon": "^4.0.0",
     "codecov": "^3.6.1",
-    "concurrently": "^4.1.2",
     "husky": "^4.2.5",
     "injectar": "^1.4.0",
     "jest": "^24.9.0",
