@@ -1,6 +1,6 @@
 {
   "name": "@felid/core",
-  "version": "0.1.0-alpha.3",
+  "version": "0.1.0-alpha.4",
   "description": "Felid web framework core",
   "main": "src/index.js",
   "repository": {
@@ -21,7 +21,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@felid/server": "0.1.0-alpha.3",
+    "@felid/server": "0.1.0-alpha.4",
     "@felid/symbols": "0.1.0-alpha.3",
     "tiniocc": "^0.0.2"
   }

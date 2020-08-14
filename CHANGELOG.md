@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.4](https://github.com/felidjs/felid/compare/v0.1.0-alpha.3...v0.1.0-alpha.4) (2020-08-14)
+
+
+### Bug Fixes
+
+* **felid:** cancel binding this for error handler ([01dde5c](https://github.com/felidjs/felid/commit/01dde5c03228871513effcfc9cb57406165ced8e))
+* **felid:** change params order of response.redirect() ([a17156b](https://github.com/felidjs/felid/commit/a17156b7ca00188ff56445beb0abfaf76e9235f3))
+
+
+### Features
+
+* **core:** use tiniocc to handle decorators ([4c9be4b](https://github.com/felidjs/felid/commit/4c9be4bc3a2692239348a33e21502b134c7c2c22))
+* **felid:** allow passing down route store to handlers ([c9457f2](https://github.com/felidjs/felid/commit/c9457f2e510a1e7ecdf161459956c154cbf2490d))
+
+
+
+
+
 # [0.1.0-alpha.3](https://github.com/felidjs/felid/compare/v0.1.0-alpha.2...v0.1.0-alpha.3) (2020-03-02)
 
 

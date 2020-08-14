@@ -1,6 +1,6 @@
 {
   "name": "@felid/server",
-  "version": "0.1.0-alpha.3",
+  "version": "0.1.0-alpha.4",
   "description": "Server module for Felid",
   "main": "src/index.js",
   "repository": {
