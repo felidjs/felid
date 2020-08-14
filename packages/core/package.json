@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@felid/server": "0.1.0-alpha.3",
-    "@felid/symbols": "0.1.0-alpha.3"
+    "@felid/symbols": "0.1.0-alpha.3",
+    "tiniocc": "^0.0.2"
   }
 }

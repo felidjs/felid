@@ -29,6 +29,17 @@ describe('decorate()', () => {
       instance.decorate('key', 'another value')
     }).toThrow()
   })
+
+  test('felid.decorate() should work regrardless of dependencies orders', () => {
+    const instance = new Felid()
+    instance.decorate('moduleC', felid => felid.moduleA + ' ' + felid.moduleB)
+    instance.decorate('moduleB', felid => 'moduleB')
+    instance.decorate('moduleA', 'moduleA')
+
+    expect(instance.moduleA).toBe('moduleA')
+    expect(instance.moduleB).toBe('moduleB')
+    expect(instance.moduleC).toBe('moduleA moduleB')
+  })
 })
 
 describe('decorateRequest()', () => {
