@@ -34,6 +34,11 @@ const supportedHttpMethods = [
 ]
 
 class Felid extends Core {
+  exit (exitCode = 0) {
+    this.close()
+    process.exit(exitCode)
+  }
+
   lookup () {
     return (req, res) => this[kRouter].lookup(req, res)
   }

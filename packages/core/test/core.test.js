@@ -107,4 +107,3 @@ describe('close()', () => {
     expect(instance.listening).toBe(false)
   })
 })
-

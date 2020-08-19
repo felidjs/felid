@@ -27,6 +27,22 @@ describe('listen()', () => {
   })
 })
 
+describe('exit()', () => {
+  test('felid.exit() should exit the process with exit code 0', () => {
+    const instance = new Felid()
+    const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {})
+    instance.exit()
+    expect(mockExit).toHaveBeenCalledWith(0)
+  })
+
+  test('felid.exit() should exit the process with given exit code', () => {
+    const instance = new Felid()
+    const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {})
+    instance.exit(1)
+    expect(mockExit).toHaveBeenCalledWith(1)
+  })
+})
+
 describe('addParser()', () => {
   test('felid.addParser should apply parser to body of given content-type', async () => {
     const instance = new Felid()
