@@ -1,6 +1,6 @@
 {
   "name": "felid",
-  "version": "0.1.0-alpha.4",
+  "version": "0.1.0-alpha.5",
   "description": "A Node.js web framework",
   "main": "src/index.js",
   "repository": {
@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/felidjs/felid#readme",
   "dependencies": {
-    "@felid/core": "0.1.0-alpha.4",
+    "@felid/core": "0.1.0-alpha.5",
     "@felid/symbols": "0.1.0-alpha.3",
     "abstract-logging": "^2.0.0",
     "delegates": "^1.0.0",
