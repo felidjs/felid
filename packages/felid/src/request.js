@@ -1,25 +1,36 @@
 const querystring = require('querystring')
 const delegate = require('delegates')
 
-const noBodyMethods = [
-  'GET',
-  'OPTIONS',
-  'HEAD',
-  'TRACE'
-]
-
-const Request = {
-  header (key) {
-    return this.req.headers[key]
+function init () {
+  const Request = {
+    header (key) {
+      return this.req.headers[key]
+    }
   }
+
+  delegate(Request, 'req')
+    .getter('headers')
+    .getter('method')
+    .getter('url')
+
+  return Object.create(Request)
 }
 
-delegate(Request, 'req')
-  .getter('headers')
-  .getter('method')
-  .getter('url')
-
 async function build (proto, req, params) {
+  const noBodyMethods = [
+    'GET',
+    'OPTIONS',
+    'HEAD',
+    'TRACE'
+  ]
+
+  function buildBody (request) {
+    const req = request.req
+    const contentType = req.headers['content-type'] || ''
+    const parser = request.parsers.get(contentType)
+    return parser(req)
+  }
+
   const request = Object.create(proto)
   request.req = req
   const queryPrefix = req.url.indexOf('?')
@@ -36,16 +47,7 @@ async function build (proto, req, params) {
   return request
 }
 
-function buildBody (request) {
-  const req = request.req
-  const contentType = req.headers['content-type'] || ''
-  const parser = request.parsers.get(contentType)
-  return parser(req)
-}
-
 module.exports = {
-  init: function () {
-    return Object.create(Request)
-  },
+  init,
   build
 }
