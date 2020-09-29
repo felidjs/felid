@@ -34,9 +34,9 @@ const supportedHttpMethods = [
 ]
 
 class Felid extends Core {
-  exit (exitCode = 0) {
-    this.close()
-    process.exit(exitCode)
+  exit (exitCode, callback) {
+    this.close(callback)
+    process.exit(exitCode || 0)
   }
 
   lookup () {

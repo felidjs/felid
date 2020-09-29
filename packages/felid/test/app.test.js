@@ -41,6 +41,20 @@ describe('exit()', () => {
     instance.exit(1)
     expect(mockExit).toHaveBeenCalledWith(1)
   })
+
+  test('felid.exit()\'s callback function should be called when the server is closed', (done) => {
+    let isClosed = false
+    const instance = new Felid()
+    instance.server.on('close', () => {
+      isClosed = true
+    })
+    instance.listen(3000)
+    instance.exit(0, (err) => {
+      expect(err).toBe(undefined)
+      expect(isClosed).toBe(true)
+      done()
+    })
+  })
 })
 
 describe('addParser()', () => {
