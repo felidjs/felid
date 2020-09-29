@@ -5,7 +5,6 @@
   ],
   "scripts": {
     "benchmark": "npx concurrently -k -s first \"node ./examples/basic.js\" \"npx autocannon -c 100 -d 5 -p 10 localhost:8080\"",
-    "coverage": "codecov",
     "lint": "standard --fix 'packages/**/*.js' | snazzy",
     "postinstall": "lerna bootstrap",
     "test": "npm run lint && npm run unit",
@@ -14,7 +13,6 @@
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
-    "codecov": "^3.6.1",
     "husky": "^4.2.5",
     "injectar": "^1.4.0",
     "jest": "^24.9.0",
