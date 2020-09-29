@@ -106,4 +106,18 @@ describe('close()', () => {
     instance.close()
     expect(instance.listening).toBe(false)
   })
+
+  test('core.close()\'s callback function should be called when the server is closed', (done) => {
+    let isClosed = false
+    const instance = new Core()
+    instance.server.on('close', () => {
+      isClosed = true
+    })
+    instance.listen(3000)
+    instance.close((err) => {
+      expect(err).toBe(undefined)
+      expect(isClosed).toBe(true)
+      done()
+    })
+  })
 })

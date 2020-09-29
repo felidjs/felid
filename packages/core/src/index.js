@@ -44,8 +44,8 @@ class FelidCore {
   }
 
   // others
-  close () {
-    this[kServer].close()
+  close (callback) {
+    this[kServer].close(callback)
   }
 
   _init (options) {
