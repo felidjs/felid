@@ -95,6 +95,18 @@ describe('plugin()', () => {
 
     expect(instance.foo).toBe('bar')
   })
+
+  test('core.plugin() should handle async function correctly', () => {
+    const instance = new Core()
+    instance.plugin(async (instance, options) => {
+      return new Promise((resolve, reject) => {
+        instance.decorate('foo', 'bar')
+        resolve()
+      })
+    })
+
+    expect(instance.foo).toBe('bar')
+  })
 })
 
 describe('close()', () => {
